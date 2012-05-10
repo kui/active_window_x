@@ -1,7 +1,6 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
 require 'active_window_x'
-GC.start
 
 include ActiveWindowX
 
@@ -150,7 +149,7 @@ describe Xlib do
       it 'should return ' do
         arr = Xlib::list_properties(@display, @window)
         arr.should be_a Array
-        # p arr.map {|a| Xlib::get_atom_name(@display, a)}
+        arr.each{|a| p Xlib::get_atom_name(@display, a)}
       end
     end
   end
