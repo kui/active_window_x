@@ -150,8 +150,7 @@ describe Xlib do
       it 'should return ' do
         arr = Xlib::list_properties(@display, @window)
         arr.should be_a Array
-        p arr.map {|a|
-          Xlib::get_atom_name(@display, a)}
+        # p arr.map {|a| Xlib::get_atom_name(@display, a)}
       end
     end
   end

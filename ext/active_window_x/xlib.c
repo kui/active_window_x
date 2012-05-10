@@ -356,7 +356,6 @@ void Init_xlib(void){
   rb_define_const(xlib_module, "FamilyInternet",   FamilyInternet);
   rb_define_const(xlib_module, "FamilyDECnet",     FamilyDECnet);
   rb_define_const(xlib_module, "FamilyChaos",      FamilyChaos);
-  rb_define_const(xlib_module, "FamilyInternet",   FamilyInternet);
   rb_define_const(xlib_module, "FamilyServerInterpreted",  FamilyServerInterpreted);
   rb_define_const(xlib_module, "PropertyNewValue",         PropertyNewValue);
   rb_define_const(xlib_module, "PropertyDelete",   PropertyDelete);
