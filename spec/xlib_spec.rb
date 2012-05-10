@@ -1,6 +1,7 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
 require 'active_window_x'
+GC.start
 
 include ActiveWindowX
 
@@ -115,6 +116,42 @@ describe Xlib do
     context "with a atom" do
       it 'should return the atom name' do
         Xlib::get_atom_name(@display, @atom).should == @name
+      end
+    end
+  end
+
+  describe '.get_window_property' do
+    before do
+      @display = Xlib::open_display nil
+      @window = Xlib::default_root_window @display
+      @name = "Name"
+      @atom = Xlib::intern_atom @display, @name, false
+      @length = 1024
+    end
+    after do
+      Xlib::close_display @display
+    end
+    context 'with ' do
+      it 'should return ' do
+        p Xlib::get_window_property(@display, @window, @atom, 0, @length, false, Xlib::AnyPropertyType);
+      end
+    end
+  end
+
+  describe '.list_properties' do
+    before do
+      @display = Xlib::open_display nil
+      @window = Xlib::default_root_window @display
+    end
+    after do
+      Xlib::close_display @display
+    end
+    context 'with ' do
+      it 'should return ' do
+        arr = Xlib::list_properties(@display, @window)
+        arr.should be_a Array
+        p arr.map {|a|
+          Xlib::get_atom_name(@display, a)}
       end
     end
   end
