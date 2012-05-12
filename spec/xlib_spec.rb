@@ -169,9 +169,9 @@ describe Xlib do
         p r
         r.shift.should == @window_atom
         r.shift.should == 32
+        l = r.shift
         r.shift.should
-        r.shift.should
-        r.shift
+        r.shift.length == DL::sizeof('l') * l
       end
     end
   end
