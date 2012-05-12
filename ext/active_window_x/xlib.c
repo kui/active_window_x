@@ -36,7 +36,7 @@ VALUE xlib_open_display(VALUE self, VALUE name_obj) {
     rb_raise(unknown_display_name_class, "invalid name: %s", name);
     return Qnil;
   }
-  return Data_Wrap_Struct(display_class, 0, -1, d);
+  return Data_Wrap_Struct(display_class, 0, 0, d);
 }
 
 // XCloseDisplay
@@ -78,15 +78,17 @@ VALUE xlib_query_tree(VALUE self, VALUE d, VALUE w){
   if(!XQueryTree(display, window, &root, &parent, &children, &nchildren))
     rb_raise(rb_eRuntimeError, "fail to execute XQueryTree");
 
+  children_obj = rb_ary_new2(nchildren);
+  for(i=0; i < nchildren; i++){
+    rb_ary_push(children_obj, ULONG2NUM((unsigned long) children[i]));
+  }
+
   arr_obj = rb_ary_new2(3L);
   rb_ary_push(arr_obj, root == None ? Qnil : ULONG2NUM((unsigned long) root));
   rb_ary_push(arr_obj, parent == None ? Qnil : ULONG2NUM((unsigned long) parent));
-  children_obj = rb_ary_new2((long) nchildren);
-  for(i=0; i < nchildren; i++)
-    rb_ary_push(children_obj, ULONG2NUM((unsigned long) children[i]));
   rb_ary_push(arr_obj, children_obj);
 
-  // if(children != NULL) XFree(children);
+  if(children != NULL) XFree(children);
 
   return arr_obj;
 }
@@ -135,7 +137,7 @@ static VALUE xlib_get_atom_name(VALUE self, VALUE d, VALUE atom_obj){
     r = Qnil;
   } else {
     r = rb_str_new2(name);
-    // XFree(name);
+    XFree(name);
   }
   return r;
 }
@@ -156,8 +158,8 @@ static VALUE xlib_get_window_property(VALUE self, VALUE display_obj, VALUE w_obj
   unsigned long nitems_return;
   unsigned long bytes_after_return;
   unsigned char *prop_return;
-  int result;
-  VALUE ary;
+  int result, prop_size;
+  VALUE ary, prop;
 
   GetDisplay(display_obj, display);
   w = (Window) NUM2ULONG(w_obj);
@@ -165,24 +167,28 @@ static VALUE xlib_get_window_property(VALUE self, VALUE display_obj, VALUE w_obj
   long_offset = NUM2LONG(long_offset_obj);
   long_length = NUM2LONG(long_length_obj);
   delete = (delete_obj == Qfalse || delete_obj == Qnil) ? False : True;
-  req_type = (Atom) NUM2ULONG(property_obj);
+  req_type = (Atom) NUM2ULONG(req_type_obj);
 
   result = XGetWindowProperty(display, w, property, long_offset, long_length, delete,
                               req_type,
                               &actual_type_return, &actual_format_return,
-                              &nitems_return, &bytes_after_return, &prop_return) ;
-  if(result != Success)
+                              &nitems_return, &bytes_after_return, &prop_return);
+  if (result != Success)
     rb_raise(rb_eRuntimeError, "fail on XGetWindowProperty");
 
+  if (prop_return == NULL) {
+    prop = Qnil;
+  } else {
+    prop = rb_str_new2(prop_return);
+    XFree(prop_return);
+  }
+
   ary = rb_ary_new2(5L);
-  rb_ary_push(ary,
-              actual_type_return == None ?
-              Qnil :
-              ULONG2NUM((unsigned long) actual_type_return));
+  rb_ary_push(ary, ULONG2NUM(actual_type_return));
   rb_ary_push(ary, INT2FIX(actual_format_return));
   rb_ary_push(ary, LONG2NUM(nitems_return));
   rb_ary_push(ary, LONG2NUM(bytes_after_return));
-  rb_ary_push(ary, prop_return == NULL ? Qnil : rb_str_new2(prop_return));
+  rb_ary_push(ary, prop);
 
   return ary;
 }
@@ -203,9 +209,10 @@ VALUE xlib_list_properties(VALUE self, VALUE display_obj, VALUE w_obj) {
     ary = Qnil;
   }else{
     ary = rb_ary_new2(num_prop_return);
-    for(i=0; i<num_prop_return; i++)
+    for(i=0; i<num_prop_return; i++){
       rb_ary_push(ary, result[i] == None ? Qnil : ULONG2NUM(result[i]));
-    // XFree(result);
+    }
+    XFree(result);
   }
 
   return ary;
