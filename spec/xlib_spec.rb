@@ -1,6 +1,7 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
 require 'active_window_x'
+require 'dl'
 
 include ActiveWindowX
 
@@ -48,7 +49,6 @@ describe Xlib do
 
   describe '.get_default_root' do
   end
-
   describe '.query_tree' do
     before do
       @display = Xlib::open_display(nil)
@@ -123,16 +123,55 @@ describe Xlib do
     before do
       @display = Xlib::open_display nil
       @window = Xlib::default_root_window @display
-      @name = "Name"
-      @atom = Xlib::intern_atom @display, @name, false
       @length = 1024
     end
     after do
       Xlib::close_display @display
     end
-    context 'with ' do
-      it 'should return ' do
-        p Xlib::get_window_property(@display, @window, @atom, 0, @length, false, Xlib::AnyPropertyType);
+    context 'with unknown property' do
+      before do
+        @name = "FOO"
+        @atom = Xlib::intern_atom @display, @name, false
+      end
+      it 'should return a Array such as [Xlib::None, ]' do
+        r = Xlib::get_window_property(@display, @window, @atom, 0, @length, false, Xlib::AnyPropertyType);
+        r.shift.should == Xlib::None
+        r.shift.should == 0
+        r.shift.should == 0
+        r.shift.should == 0
+        r.length.should == 1
+      end
+    end
+    context 'with an invalid type and a propery named as "_NET_ACTIVE_WINDOW"' do
+      before do
+        @name = "_NET_ACTIVE_WINDOW"
+        @atom = Xlib::intern_atom @display, @name, false
+        @window_atom = Xlib::intern_atom(@display, "WINDOW", false)
+      end
+      it 'should return a Array such as [Xlib::None, ]' do
+        r = Xlib::get_window_property(@display, @window, @atom, 0, @length, false, 10)
+        p r
+        r.shift.should == @window_atom
+        r.shift.should == 32
+        r.shift.should == 0
+        r.shift.should # == DL::sizeof('l')
+        r.length.should == 1
+      end
+    end
+    context 'with an validi type and a propery named as "_NET_ACTIVE_WINDOW"' do
+      before do
+        @name = "_NET_ACTIVE_WINDOW"
+        @atom = Xlib::intern_atom @display, @name, false
+        @window_atom = Xlib::intern_atom(@display, "WINDOW", false)
+      end
+      it 'should return a Array such as [Xlib::None, ]' do
+        r = Xlib::get_window_property(@display, @window, @atom, 0, @length, false, @window_atom)
+        p r
+        r.shift.should == @window_atom
+        r.shift.should == 32
+        r.shift.should
+        r.shift.should
+        r.shift
       end
     end
   end
@@ -140,17 +179,35 @@ describe Xlib do
   describe '.list_properties' do
     before do
       @display = Xlib::open_display nil
-      @window = Xlib::default_root_window @display
+      @root = Xlib::default_root_window @display
     end
     after do
       Xlib::close_display @display
     end
-    context 'with ' do
-      it 'should return ' do
-        arr = Xlib::list_properties(@display, @window)
+    context 'with the root window' do
+      it 'should return a Array of Numeric' do
+        arr = Xlib::list_properties(@display, @root)
         arr.should be_a Array
-        arr.each{|a| p Xlib::get_atom_name(@display, a)}
+        arr.each{|a| a.should be_a Numeric; }
+      end
+    end
+    context 'with child windows of the root window' do
+      before do
+        arr = Xlib::query_tree @display, @root
+        @children = arr[2]
+      end
+      it 'should return a Array of Numeric' do
+        @children.each do |child|
+          arr = Xlib::list_properties(@display, child)
+          if arr
+            arr.should be_a Array
+            arr.each{|a| a.should be_a Numeric }
+          else
+            arr.should be_nil
+          end
+        end
       end
     end
   end
+
 end
