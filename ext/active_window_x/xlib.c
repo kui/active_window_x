@@ -158,7 +158,7 @@ static VALUE xlib_get_window_property(VALUE self, VALUE display_obj, VALUE w_obj
   unsigned long nitems_return;
   unsigned long bytes_after_return;
   unsigned char *prop_return;
-  int result, prop_size;
+  int result, prop_size, nbytes;
   VALUE ary, prop;
 
   GetDisplay(display_obj, display);
@@ -174,12 +174,23 @@ static VALUE xlib_get_window_property(VALUE self, VALUE display_obj, VALUE w_obj
                               &actual_type_return, &actual_format_return,
                               &nitems_return, &bytes_after_return, &prop_return);
   if (result != Success)
-    rb_raise(rb_eRuntimeError, "fail on XGetWindowProperty");
+    rb_raise(rb_eRuntimeError, "XGetWindowProperty faild");
 
   if (prop_return == NULL) {
     prop = Qnil;
   } else {
-    prop = rb_str_new2(prop_return);
+    // get nbytes (reffer to Get_Window_Property_Data_And_Type of xprop)
+    switch (actual_format_return) {
+    case 32 : nbytes = sizeof(long); break;
+    case 16 : nbytes = 2; break;
+    case 8 : nbytes = 1; break;
+    case 0 : nbytes = 0; break;
+    default: rb_raise(rb_eRuntimeError,
+                      "Unexpected actual_format_return(%d) on XGetWindowProperty",
+                      actual_format_return);
+    }
+    prop_size = nbytes * nitems_return;
+    prop = rb_str_new(prop_return, prop_size);
     XFree(prop_return);
   }
 
