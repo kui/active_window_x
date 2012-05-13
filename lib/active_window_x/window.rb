@@ -44,18 +44,24 @@ module ActiveWindowX
       x_query_tree[2].map{|w|Window.new(@display, w)}
     end
 
-    # window property getter wiith XGetWindowProperty
+    # window property getter with easy way for XGetWindowProperty
     def prop name
+      val, format, nitems = prop_raw name
+      case format
+      when 32; val.unpack("l!#{nitems}")
+      when 16; val.unpack("s#{nitems}")
+      when 8; val[0, nitems]
+      when 0; nil
+      end
+    end
+
+    # window property getter with easy way for XGetWindowProperty
+    # which return [propety_value, format, number_of_items]
+    def prop_raw name
       atom = @display.intern_atom name
       actual_type, actual_format, nitems, bytes_after, val =
         Xlib::x_get_window_property @display, @id, atom, 0, READ_BUFF_LENGTH, false, Xlib::AnyPropertyType
-
-      case actual_format
-      when 32; val.unpack("l!#{nitems}")
-      when 16; val.unpack("s#{nitems}")
-      when 8; val
-      when 0; nil
-      end
+      return [val, actual_format, nitems]
     end
   end
 
