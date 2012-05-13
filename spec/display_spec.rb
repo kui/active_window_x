@@ -12,13 +12,13 @@ describe Xlib do
     @display.close
   end
 
-  describe '#root' do
+  describe '#root_window' do
     before do
       @root_id = 123456
       Xlib.should_receive(:default_root_window).and_return(@root_id)
     end
     it 'should return the root window' do
-      @display.root.id.should == @root_id
+      @display.root_window.id.should == @root_id
     end
   end
 
