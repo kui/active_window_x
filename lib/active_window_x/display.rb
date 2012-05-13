@@ -55,8 +55,13 @@ module ActiveWindowX
       end
     end
 
-    def nex_event
-      Xlib::x_next_event @raw
+    def next_event
+      xevent = Xlib::x_next_event @raw
+
+      case xevent.type
+      when Xlib::PropertyNotify; PropertyEvent.new self, xevent
+      else Event.new self, xevent
+      end
     end
   end
 
