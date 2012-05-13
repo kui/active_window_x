@@ -3,27 +3,10 @@
 module ActiveWindowX
 
   # binding for Window on X11
-  class Window
+  class Window < XID
 
     # a buffer for #x_get_window_property
     READ_BUFF_LENGTH = 1024
-
-    # a display which has this window
-    attr_reader :display
-
-    # window ID (#define Window unsinged long)
-    attr_reader :id
-
-    def initialize display, id
-      if display.kind_of? Display
-        @display = display
-      elsif display.kind_of? Xlib::Display
-        @display = Display.new display
-      else
-        raise ArgumentError, "expect #{Display.name} or #{Xlib::Display.name}"
-      end
-      @id = id
-    end
 
     def x_query_tree
       Xlib::x_query_tree @display.raw, @id
@@ -73,6 +56,11 @@ module ActiveWindowX
     def prop_atoms
       r = Xlib::x_list_properties @display.raw, @id
       r.nil? ? [] : r
+    end
+
+    # Array of the property name list for this window
+    def prop_names
+      prop_atoms.map{|a| @display.atom_name a}
     end
   end
 
