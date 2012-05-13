@@ -3,11 +3,11 @@
 module ActiveWindowX
 
   # binding for XID on X11
-  class XID
-    # a display which has this window
+  class Xid
+    # a display which has this XID
     attr_reader :display
 
-    # window ID (#define Window unsinged long)
+    # raw XID (#define Window unsinged long)
     attr_reader :id
 
     def initialize display, id

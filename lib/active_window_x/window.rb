@@ -3,7 +3,7 @@
 module ActiveWindowX
 
   # binding for Window on X11
-  class Window < XID
+  class Window < Xid
 
     # a buffer for #x_get_window_property
     READ_BUFF_LENGTH = 1024
