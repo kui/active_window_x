@@ -54,6 +54,10 @@ module ActiveWindowX
         @cache[id] = Xlib::x_get_atom_name @raw, id
       end
     end
+
+    def nex_event
+      Xlib::x_next_event @raw
+    end
   end
 
 end
