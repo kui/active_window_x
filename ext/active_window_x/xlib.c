@@ -299,8 +299,17 @@ void Init_xlib(void){
   xlib_module = rb_define_module("Xlib");
   display_class = rb_define_class_under(xlib_module, "Display", rb_cData);
   x_event_class = rb_define_class_under(xlib_module, "XEvent", rb_cData);
+  rb_define_attr(x_event_class, "type", True, True);
   x_property_event_class =
     rb_define_class_under(xlib_module, "XPropertyEvent", x_event_class);
+  rb_define_attr(x_property_event_class, "type", True, True);
+  rb_define_attr(x_property_event_class, "serial", True, True);
+  rb_define_attr(x_property_event_class, "send_event", True, True);
+  rb_define_attr(x_property_event_class, "display", True, True);
+  rb_define_attr(x_property_event_class, "window", True, True);
+  rb_define_attr(x_property_event_class, "atom", True, True);
+  rb_define_attr(x_property_event_class, "time", True, True);
+  rb_define_attr(x_property_event_class, "state", True, True);
   unknown_display_name_class =
     rb_define_class_under(xlib_module, "UnknownDisplayName", rb_eRuntimeError);
   x_error_event_class =
