@@ -103,7 +103,7 @@ describe Window do
           with(@display.raw, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
           and_return([@prop_id, 32, @prop.length, 0, @prop.pack('l!*')])
       end
-      it 'should return ' do
+      it 'should return a Array of Numeric' do
         @window.prop(@prop_name).should == @prop
       end
     end
@@ -114,7 +114,7 @@ describe Window do
           with(@display.raw, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
           and_return([@prop_id, 16, @prop.length, 0, @prop.pack('s*')])
       end
-      it 'should return ' do
+      it 'should return a Array of Numeric' do
         @window.prop(@prop_name).should == @prop
       end
     end
@@ -125,8 +125,29 @@ describe Window do
           with(@display.raw, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
           and_return([@prop_id, 8, @prop.length, 0, @prop])
       end
-      it 'should return ' do
+      it 'should return String' do
         @window.prop(@prop_name).should == @prop
+      end
+    end
+  end
+
+  describe '#prop_names' do
+    context ', which recieve property names,' do
+      before do
+        @prop_list = ["FOO", "BAR", "BAZ"]
+        Xlib.should_receive(:x_list_properties){ @prop_list }
+      end
+      it 'shuold return the names' do
+        @window.prop_names.should == @prop_list
+      end
+    end
+    context ', which recieve no property names,' do
+      before do
+        @prop_list = nil
+        Xlib.should_receive(:x_list_properties){ @prop_list }
+      end
+      it 'shuold return the names' do
+        @window.prop_names.should == []
       end
     end
   end
