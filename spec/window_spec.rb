@@ -151,4 +151,16 @@ describe Window do
       end
     end
   end
+
+  describe '#select_input' do
+    context 'with a valid mask' do
+      before do
+        @mask = Xlib::PropertyChangeMask
+        Xlib.should_receive(:x_select_input).with(@display.raw, @id, @mask).and_return(1)
+      end
+      it 'should call Xlib::x_select_input' do
+        @window.select_input @mask
+      end
+    end
+  end
 end

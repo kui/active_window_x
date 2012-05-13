@@ -239,7 +239,7 @@ describe Xlib do
       puts "type:#{event.type}, serial:#{event.serial}, send_event:#{event.send_event},"+
         " display:#{event.display}, window:#{event.window}, atom:#{event.atom},"+
         " time:#{event.time}, state:#{event.state}"
-    end
+    end if false
   end
 
 end if ENV.has_key? 'DISPLAY' # if X Window System running, this spec should be executed

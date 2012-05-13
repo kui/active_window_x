@@ -70,6 +70,10 @@ module ActiveWindowX
     def == w
       w.kind_of?(Window) and w.id == @id
     end
+
+    def select_input mask
+      Xlib::x_select_input @display.raw, @id, mask
+    end
   end
 
 end
