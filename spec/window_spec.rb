@@ -79,4 +79,55 @@ describe Window do
       c[2].id.should == @children[2]
     end
   end
+
+  describe '#prop' do
+    before do
+      @prop_id = 1234
+      @prop_name = 'FOO'
+      @display.should_receive(:intern_atom).with(@prop_name).and_return(@prop_id)
+    end
+    context 'with a property name, which does not exist for the window,' do
+      before do
+        Xlib.should_receive(:x_get_window_property).
+          with(@display, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          and_return([nil, 0, 0, 0, nil])
+      end
+      it 'should return nil' do
+        @window.prop(@prop_name).should be_nil
+      end
+    end
+    context 'with a property name, which exist for the window and is the long type,' do
+      before do
+        @prop = [123, 456]
+        Xlib.should_receive(:x_get_window_property).
+          with(@display, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          and_return([@prop_id, 32, @prop.length, 0, @prop.pack('l!*')])
+      end
+      it 'should return ' do
+        @window.prop(@prop_name).should == @prop
+      end
+    end
+    context 'with a property name, which exist for the window and is the short type,' do
+      before do
+        @prop = [12, 34, 46]
+        Xlib.should_receive(:x_get_window_property).
+          with(@display, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          and_return([@prop_id, 16, @prop.length, 0, @prop.pack('s*')])
+      end
+      it 'should return ' do
+        @window.prop(@prop_name).should == @prop
+      end
+    end
+    context 'with a property name, which exist for the window and is the char type,' do
+      before do
+        @prop = "abcdefg\0hijklmn"
+        Xlib.should_receive(:x_get_window_property).
+          with(@display, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          and_return([@prop_id, 8, @prop.length, 0, @prop])
+      end
+      it 'should return ' do
+        @window.prop(@prop_name).should == @prop
+      end
+    end
+  end
 end
