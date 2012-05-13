@@ -23,7 +23,7 @@ describe RootWindow do
     context ', which Xlib::x_get_window_property find an active window,' do
       before do
         Xlib.should_receive(:x_get_window_property).
-          with(@display.raw, @root.id, @prop_atom, 0, Display::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          with(@display.raw, @root.id, @prop_atom, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
           and_return([0,32,2,0,[@active_window_id,0].pack('l!*')])
       end
       it 'should return the active windows' do
@@ -33,7 +33,7 @@ describe RootWindow do
     context ', which Xlib::x_get_window_property cannot find an active window,' do
       before do
         Xlib.should_receive(:x_get_window_property).
-          with(@display.raw, @root.id, @prop_atom, 0, Display::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          with(@display.raw, @root.id, @prop_atom, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
           and_return([0,32,2,0,[Xlib::None,0].pack('l!*')])
       end
       it 'should return nil' do
