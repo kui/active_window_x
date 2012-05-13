@@ -6,8 +6,10 @@ include ActiveWindowX
 
 describe Xlib do
   before do
-    @raw_display = mock Xlib::Display
-    @display = Display.new @raw_display
+    @display = Display.new nil
+  end
+  after do
+    @display.close
   end
 
   describe '#root' do
