@@ -11,13 +11,14 @@
 #define GetDisplay(obj, d) {                    \
     Data_Get_Struct(obj, Display, d);           \
   }
-#define GetXTextProperty(obj, t) {              \
-    Data_Get_Struct(obj, XTextProperty, t);     \
+#define GetXEvent(obj, ev) {              \
+    Data_Get_Struct(obj, XEvent, ev);     \
   }
 
 VALUE xlib_module;
 VALUE display_class;
-VALUE x_text_property_class;
+VALUE x_event_class;
+VALUE x_property_event_class;
 VALUE unknown_display_name_class;
 VALUE x_error_event_class;
 
@@ -229,6 +230,57 @@ VALUE xlib_x_list_properties(VALUE self, VALUE display_obj, VALUE w_obj) {
   return ary;
 }
 
+VALUE xlib_x_select_input(VALUE self, VALUE display_obj, VALUE w_obj, VALUE event_mask_obj){
+  Display *display;
+  Window w;
+  long event_mask;
+  int result;
+
+  GetDisplay(display_obj, display);
+  w = (Window) NUM2ULONG(w_obj);
+  event_mask = NUM2LONG(event_mask_obj);
+
+  result = XSelectInput(display, w, event_mask);
+
+  return INT2NUM(result);
+}
+
+VALUE x_event_new(XEvent *xevent) {
+  VALUE ret;
+
+  switch (xevent->type){
+  case PropertyNotify:
+    ret = Data_Wrap_Struct(x_property_event_class, 0, 0, xevent);
+    // see `man XPropertyEvent`
+    rb_iv_set(ret, "@type", INT2FIX(xevent->xproperty.type));
+    rb_iv_set(ret, "@serial", ULONG2NUM(xevent->xproperty.serial));
+    rb_iv_set(ret, "@send_event", INT2FIX(xevent->xproperty.send_event));
+    rb_iv_set(ret, "@display", Data_Wrap_Struct(display_class, 0, 0, xevent->xproperty.display));
+    rb_iv_set(ret, "@window", ULONG2NUM(xevent->xproperty.window));
+    rb_iv_set(ret, "@atom", ULONG2NUM(xevent->xproperty.atom));
+    rb_iv_set(ret, "@time", ULONG2NUM(xevent->xproperty.time));
+    rb_iv_set(ret, "@state", INT2FIX(xevent->xproperty.state));
+    break;
+  default:
+    ret = Data_Wrap_Struct(x_event_class, 0, 0, xevent);
+    rb_iv_set(ret, "@type", INT2FIX(xevent->type));
+  }
+
+  return ret;
+}
+
+VALUE xlib_x_next_event(VALUE self, VALUE display_obj) {
+  Display *display;
+  XEvent *event_return;
+  VALUE event_obj;
+
+  GetDisplay(display_obj, display);
+  event_return = ALLOC(XEvent);
+
+  XNextEvent(display, event_return);
+
+  return x_event_new(event_return);
+}
 
 #define ERROR_MESSAGE_BUFF 256
 int error_handler(Display* d, XErrorEvent* error_event){
@@ -246,7 +298,9 @@ void Init_xlib(void){
 
   xlib_module = rb_define_module("Xlib");
   display_class = rb_define_class_under(xlib_module, "Display", rb_cData);
-  x_text_property_class = rb_define_class_under(xlib_module, "XTextProperty", rb_cData);
+  x_event_class = rb_define_class_under(xlib_module, "XEvent", rb_cData);
+  x_property_event_class =
+    rb_define_class_under(xlib_module, "XPropertyEvent", x_event_class);
   unknown_display_name_class =
     rb_define_class_under(xlib_module, "UnknownDisplayName", rb_eRuntimeError);
   x_error_event_class =
@@ -263,6 +317,7 @@ void Init_xlib(void){
   rb_define_singleton_method(xlib_module, "x_get_window_property",
                              xlib_x_get_window_property, 7);
   rb_define_singleton_method(xlib_module, "x_list_properties", xlib_x_list_properties, 2);
+  rb_define_singleton_method(xlib_module, "x_select_input", xlib_x_select_input, 3);
 
   /*
     Constants on X.h
@@ -272,7 +327,9 @@ void Init_xlib(void){
     sed -e 's/^.define \([a-zA-Z]*\).*./rb_define_const(xlib_module, "\1",	INT2NUM(\1));/'|uniq
     ```
   */
-  // rb_define_const(xlib_module, "X",	INT2NUM(X));
+#ifdef X
+  rb_define_const(xlib_module, "X",	INT2NUM(X));
+#endif
   rb_define_const(xlib_module, "None",	INT2NUM(None));
   rb_define_const(xlib_module, "ParentRelative",	INT2NUM(ParentRelative));
   rb_define_const(xlib_module, "CopyFromParent",	INT2NUM(CopyFromParent));
@@ -344,11 +401,15 @@ void Init_xlib(void){
   rb_define_const(xlib_module, "ShiftMask",	INT2NUM(ShiftMask));
   rb_define_const(xlib_module, "LockMask",	INT2NUM(LockMask));
   rb_define_const(xlib_module, "ControlMask",	INT2NUM(ControlMask));
-  //rb_define_const(xlib_module, "Mod",	INT2NUM(Mod));
+#ifdef Mod
+  rb_define_const(xlib_module, "Mod",	INT2NUM(Mod));
+#endif
   rb_define_const(xlib_module, "ShiftMapIndex",	INT2NUM(ShiftMapIndex));
   rb_define_const(xlib_module, "LockMapIndex",	INT2NUM(LockMapIndex));
   rb_define_const(xlib_module, "ControlMapIndex",	INT2NUM(ControlMapIndex));
-  // rb_define_const(xlib_module, "Button",	INT2NUM(Button));
+#ifdef Button
+  rb_define_const(xlib_module, "Button",	INT2NUM(Button));
+#endif
   rb_define_const(xlib_module, "AnyModifier",	INT2NUM(AnyModifier));
   rb_define_const(xlib_module, "NotifyNormal",	INT2NUM(NotifyNormal));
   rb_define_const(xlib_module, "NotifyGrab",	INT2NUM(NotifyGrab));
