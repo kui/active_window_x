@@ -134,7 +134,7 @@ describe Window do
   describe '#prop_names' do
     context ', which recieve property names,' do
       before do
-        @prop_list = ["FOO", "BAR", "BAZ"]
+        @prop_list = [000, 111, 222]
         Xlib.should_receive(:x_list_properties).and_return(@prop_list)
       end
       it 'shuold return the names' do
