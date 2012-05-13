@@ -40,22 +40,6 @@ module ActiveWindowX
     def children
       x_query_tree[2].map{|w|Window.new(@display, w)}
     end
-
-    def intern_atom name
-      if @cache.has_key? name
-        @cache[name]
-      else
-        @cache[name] = Xlib::x_intern_atom @raw, name, false
-      end
-    end
-
-    def atom_name id
-      if @cache.has_key? id
-        @cache[id]
-      else
-        @cache[id] = Xlib::x_atom_name @raw, id
-      end
-    end
   end
 
 end
