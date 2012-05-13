@@ -27,7 +27,7 @@ module ActiveWindowX
     # a return value of XQueryTree
     # which is an Array of Window
     def children
-      x_query_tree[2].map{|w|Window.new(@display, w)}
+      x_query_tree[2].map{|w| Window.new(@display, w)}
     end
 
     # window property getter with easy way for XGetWindowProperty
@@ -65,6 +65,10 @@ module ActiveWindowX
     # Array of the property atom list for this window
     def prop_atoms
       prop_atom_ids.map{|i| Atom.new @display, i}
+    end
+
+    def == w
+      w.kind_of?(Window) and w.id == @id
     end
   end
 
