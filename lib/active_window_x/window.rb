@@ -65,7 +65,7 @@ module ActiveWindowX
     def prop_raw name
       atom = @display.intern_atom name
       actual_type, actual_format, nitems, bytes_after, val =
-        Xlib::x_get_window_property @display, @id, atom, 0, READ_BUFF_LENGTH, false, Xlib::AnyPropertyType
+        Xlib::x_get_window_property @display.raw, @id, atom, 0, READ_BUFF_LENGTH, false, Xlib::AnyPropertyType
       return [val, actual_format, nitems]
     end
   end
