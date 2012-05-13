@@ -135,7 +135,7 @@ describe Window do
     context ', which recieve property names,' do
       before do
         @prop_list = ["FOO", "BAR", "BAZ"]
-        Xlib.should_receive(:x_list_properties){ @prop_list }
+        Xlib.should_receive(:x_list_properties).and_return(@prop_list)
       end
       it 'shuold return the names' do
         @window.prop_names.should == @prop_list

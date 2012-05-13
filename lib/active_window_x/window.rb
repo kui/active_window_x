@@ -68,6 +68,12 @@ module ActiveWindowX
         Xlib::x_get_window_property @display.raw, @id, atom, 0, READ_BUFF_LENGTH, false, Xlib::AnyPropertyType
       return [val, actual_format, nitems]
     end
+
+    # Array of the property name list for this window
+    def prop_names
+      r = Xlib::x_list_properties @display.raw, @id
+      r.nil? ? [] : r
+    end
   end
 
 end
