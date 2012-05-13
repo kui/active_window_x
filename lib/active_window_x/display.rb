@@ -34,7 +34,7 @@ module ActiveWindowX
     end
 
     def root_window
-      @root_window ||= Window.new self, Xlib::default_root_window(@raw)
+      @root_window ||= RootWindow.new self, Xlib::default_root_window(@raw)
     end
 
     def active_window

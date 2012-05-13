@@ -18,7 +18,9 @@ describe Xlib do
       Xlib.should_receive(:default_root_window).and_return(@root_id)
     end
     it 'should return the root window' do
-      @display.root_window.id.should == @root_id
+      r = @display.root_window
+      r.id.should == @root_id
+      r.should be_a RootWindow
     end
   end
 
