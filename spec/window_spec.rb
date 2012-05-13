@@ -4,7 +4,7 @@ require 'active_window_x'
 
 include ActiveWindowX
 
-describe Xlib do
+describe Window do
   before do
     @raw_display = mock Xlib::Display
     @display = mock Display
