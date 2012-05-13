@@ -208,4 +208,4 @@ describe Xlib do
     end
   end
 
-end
+end if ENV.has_key? 'DISPLAY' # if X Window System running, this spec should be executed
