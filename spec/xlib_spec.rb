@@ -222,4 +222,24 @@ describe Xlib do
     end
   end
 
+  describe '.#x_next_event' do
+    before do
+      @display = Xlib::x_open_display nil
+      @root = Xlib::default_root_window @display
+      ret = Xlib::x_select_input @display, @root, Xlib::PropertyChangeMask
+    end
+    after do
+      Xlib::x_close_display @display
+    end
+    it 'should return an event' do
+      puts "\nswitch another window !"
+      event = Xlib::x_next_event @display
+      event.should be_a Xlib::XPropertyEvent
+      event.type.should == Xlib::PropertyNotify
+      puts "type:#{event.type}, serial:#{event.serial}, send_event:#{event.send_event},"+
+        " display:#{event.display}, window:#{event.window}, atom:#{event.atom},"+
+        " time:#{event.time}, state:#{event.state}"
+    end
+  end
+
 end if ENV.has_key? 'DISPLAY' # if X Window System running, this spec should be executed

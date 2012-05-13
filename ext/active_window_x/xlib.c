@@ -327,6 +327,7 @@ void Init_xlib(void){
                              xlib_x_get_window_property, 7);
   rb_define_singleton_method(xlib_module, "x_list_properties", xlib_x_list_properties, 2);
   rb_define_singleton_method(xlib_module, "x_select_input", xlib_x_select_input, 3);
+  rb_define_singleton_method(xlib_module, "x_next_event", xlib_x_next_event, 1);
 
   /*
     Constants on X.h
