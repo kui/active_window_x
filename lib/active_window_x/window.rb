@@ -52,10 +52,15 @@ module ActiveWindowX
       return [val, actual_format, nitems]
     end
 
-    # Array of the property atom(Numeric) list for this window
+    # Array of the property atom ID(Numeric) list for this window
     def prop_atom_ids
       r = Xlib::x_list_properties @display.raw, @id
       r.nil? ? [] : r
+    end
+
+    # Array of the property atom list for this window
+    def prop_atoms
+      prop_atom_ids.map{|i| Atom.new @display, i}
     end
   end
 
