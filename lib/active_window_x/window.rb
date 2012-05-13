@@ -12,7 +12,13 @@ module ActiveWindowX
     attr_reader :id
 
     def initialize display, id
-      @display = display
+      if display.kind_of? Display
+        @display = display
+      elsif display.kind_of? Xlib::Display
+        @display = Display.new display
+      else
+        raise ArgumentError, "expect #{Display.name} or #{Xlib::Display.name}"
+      end
       @id = id
     end
 
@@ -33,6 +39,22 @@ module ActiveWindowX
     # a return value of XQueryTree
     def children
       x_query_tree[2].map{|w|Window.new(@display, w)}
+    end
+
+    def intern_atom name
+      if @cache.has_key? name
+        @cache[name]
+      else
+        @cache[name] = Xlib::x_intern_atom @raw, name, false
+      end
+    end
+
+    def atom_name id
+      if @cache.has_key? id
+        @cache[id]
+      else
+        @cache[id] = Xlib::x_atom_name @raw, id
+      end
     end
   end
 

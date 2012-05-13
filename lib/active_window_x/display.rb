@@ -12,7 +12,6 @@ module ActiveWindowX
 
     # a boolean which be true if this display was closed
     attr_reader :closed
-
     alias :closed? :closed
 
     def initialize arg=nil
@@ -25,11 +24,20 @@ module ActiveWindowX
           raise ArgumentError, 'expect nil, String or Xlib::Display'
         end
       @closed = false
+      @root_window = nil
     end
 
     def close
-      Xlib::x_close_display @display
+      Xlib::x_close_display @raw
       @closed = true
+    end
+
+    def root_window
+      @root_window ||= Window.new self, Xlib::default_root_window(@raw)
+    end
+
+    def active_window
+      root.active_window
     end
   end
 
