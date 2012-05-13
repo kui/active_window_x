@@ -22,7 +22,7 @@ VALUE unknown_display_name_class;
 VALUE x_error_event_class;
 
 // XOpenDisplay
-VALUE xlib_open_display(VALUE self, VALUE name_obj) {
+VALUE xlib_x_open_display(VALUE self, VALUE name_obj) {
   const char* name;
   Display* d;
   if (TYPE(name_obj) == T_NIL){
@@ -40,14 +40,14 @@ VALUE xlib_open_display(VALUE self, VALUE name_obj) {
 }
 
 // XCloseDisplay
-VALUE xlib_close_display(VALUE self, VALUE display_obj) {
+VALUE xlib_x_close_display(VALUE self, VALUE display_obj) {
   Display* d;
   GetDisplay(display_obj, d);
   return INT2FIX((int) XCloseDisplay(d));
 }
 
 // XGetInputFocus
-VALUE xlib_get_input_focus(VALUE self, VALUE display_obj) {
+VALUE xlib_x_get_input_focus(VALUE self, VALUE display_obj) {
   Display* d;
   Window window;
   int revert_to;
@@ -106,7 +106,7 @@ VALUE xlib_default_root_window(VALUE self, VALUE d) {
 }
 
 // XInternAtom
-static VALUE xlib_intern_atom(VALUE self, VALUE d, VALUE name_obj, VALUE b) {
+static VALUE xlib_x_intern_atom(VALUE self, VALUE d, VALUE name_obj, VALUE b) {
   Display* display;
   Atom atom;
   char *name;
@@ -122,7 +122,7 @@ static VALUE xlib_intern_atom(VALUE self, VALUE d, VALUE name_obj, VALUE b) {
 }
 
 // XGetAtomName
-static VALUE xlib_get_atom_name(VALUE self, VALUE d, VALUE atom_obj){
+static VALUE xlib_x_get_atom_name(VALUE self, VALUE d, VALUE atom_obj){
   Display* display;
   Atom atom;
   char *name;
@@ -143,7 +143,7 @@ static VALUE xlib_get_atom_name(VALUE self, VALUE d, VALUE atom_obj){
 }
 
 // XGetWindowProperty
-static VALUE xlib_get_window_property(VALUE self, VALUE display_obj, VALUE w_obj,
+static VALUE xlib_x_get_window_property(VALUE self, VALUE display_obj, VALUE w_obj,
                                       VALUE property_obj, VALUE long_offset_obj,
                                       VALUE long_length_obj, VALUE delete_obj,
                                       VALUE req_type_obj){
@@ -204,7 +204,7 @@ static VALUE xlib_get_window_property(VALUE self, VALUE display_obj, VALUE w_obj
   return ary;
 }
 
-VALUE xlib_list_properties(VALUE self, VALUE display_obj, VALUE w_obj) {
+VALUE xlib_x_list_properties(VALUE self, VALUE display_obj, VALUE w_obj) {
   Display *display;
   Window w;
   int num_prop_return;
@@ -252,17 +252,17 @@ void Init_xlib(void){
   x_error_event_class =
     rb_define_class_under(xlib_module, "XErrorEvent", rb_eRuntimeError);
 
-  rb_define_singleton_method(xlib_module, "open_display", xlib_open_display, 1);
-  rb_define_singleton_method(xlib_module, "close_display", xlib_close_display, 1);
-  rb_define_singleton_method(xlib_module, "get_input_focus", xlib_get_input_focus, 1);
+  rb_define_singleton_method(xlib_module, "x_open_display", xlib_x_open_display, 1);
+  rb_define_singleton_method(xlib_module, "x_close_display", xlib_x_close_display, 1);
+  rb_define_singleton_method(xlib_module, "x_get_input_focus", xlib_x_get_input_focus, 1);
   rb_define_singleton_method(xlib_module, "x_query_tree", xlib_x_query_tree, 2);
   rb_define_singleton_method(xlib_module, "default_root_window",
                              xlib_default_root_window, 1);
-  rb_define_singleton_method(xlib_module, "intern_atom", xlib_intern_atom, 3);
-  rb_define_singleton_method(xlib_module, "get_atom_name", xlib_get_atom_name, 2);
-  rb_define_singleton_method(xlib_module, "get_window_property",
-                             xlib_get_window_property, 7);
-  rb_define_singleton_method(xlib_module, "list_properties", xlib_list_properties, 2);
+  rb_define_singleton_method(xlib_module, "x_intern_atom", xlib_x_intern_atom, 3);
+  rb_define_singleton_method(xlib_module, "x_get_atom_name", xlib_x_get_atom_name, 2);
+  rb_define_singleton_method(xlib_module, "x_get_window_property",
+                             xlib_x_get_window_property, 7);
+  rb_define_singleton_method(xlib_module, "x_list_properties", xlib_x_list_properties, 2);
 
   /*
     Constants on X.h
