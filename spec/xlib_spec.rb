@@ -208,4 +208,18 @@ describe Xlib do
     end
   end
 
+  describe '.#x_select_input' do
+    before do
+      @display = Xlib::x_open_display nil
+      @root = Xlib::default_root_window @display
+    end
+    after do
+      Xlib::x_close_display @display
+    end
+    it 'should return a int' do
+      ret = Xlib::x_select_input @display, @root, Xlib::PropertyChangeMask
+      ret.should be_a Numeric
+    end
+  end
+
 end if ENV.has_key? 'DISPLAY' # if X Window System running, this spec should be executed
