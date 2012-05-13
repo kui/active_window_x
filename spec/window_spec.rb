@@ -131,14 +131,14 @@ describe Window do
     end
   end
 
-  describe '#prop_atoms' do
+  describe '#prop_atom_ids' do
     context ', which recieve property atoms(Numeric),' do
       before do
         @prop_list = [000, 111, 222]
         Xlib.should_receive(:x_list_properties).and_return(@prop_list)
       end
       it 'shuold return the atoms' do
-        @window.prop_atoms.should == @prop_list
+        @window.prop_atom_ids.should == @prop_list
       end
     end
     context ', which recieve no property atoms,' do
@@ -147,7 +147,7 @@ describe Window do
         Xlib.should_receive(:x_list_properties){ @prop_list }
       end
       it 'shuold return an empty array' do
-        @window.prop_atoms.should == []
+        @window.prop_atom_ids.should == []
       end
     end
   end
