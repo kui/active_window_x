@@ -51,7 +51,7 @@ module ActiveWindowX
       if @cache.has_key? id
         @cache[id]
       else
-        @cache[id] = Xlib::x_atom_name @raw, id
+        @cache[id] = Xlib::x_get_atom_name @raw, id
       end
     end
   end
