@@ -64,7 +64,7 @@ VALUE xlib_get_input_focus(VALUE self, VALUE display_obj) {
 }
 
 // XQueryTree
-VALUE xlib_query_tree(VALUE self, VALUE d, VALUE w){
+VALUE xlib_x_query_tree(VALUE self, VALUE d, VALUE w){
   Display* display;
   Window window;
   Window root;
@@ -255,7 +255,7 @@ void Init_xlib(void){
   rb_define_singleton_method(xlib_module, "open_display", xlib_open_display, 1);
   rb_define_singleton_method(xlib_module, "close_display", xlib_close_display, 1);
   rb_define_singleton_method(xlib_module, "get_input_focus", xlib_get_input_focus, 1);
-  rb_define_singleton_method(xlib_module, "query_tree", xlib_query_tree, 2);
+  rb_define_singleton_method(xlib_module, "x_query_tree", xlib_x_query_tree, 2);
   rb_define_singleton_method(xlib_module, "default_root_window",
                              xlib_default_root_window, 1);
   rb_define_singleton_method(xlib_module, "intern_atom", xlib_intern_atom, 3);

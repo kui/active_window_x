@@ -47,9 +47,7 @@ describe Xlib do
     end
   end
 
-  describe '.get_default_root' do
-  end
-  describe '.query_tree' do
+  describe '.x_query_tree' do
     before do
       @display = Xlib::open_display(nil)
     end
@@ -61,7 +59,7 @@ describe Xlib do
         @root = Xlib::default_root_window(@display)
       end
       it 'should return the root, the parent and then children' do
-        result = Xlib::query_tree(@display, @root)
+        result = Xlib::x_query_tree(@display, @root)
         result.shift.should == @root
         result.shift.should be_nil
         children = result.shift
@@ -73,12 +71,12 @@ describe Xlib do
     context 'with a child window of the root window' do
       before do
         @root = Xlib::default_root_window(@display)
-        result = Xlib::query_tree(@display, @root)
+        result = Xlib::x_query_tree(@display, @root)
         children = result[2]
         @window = children.first
       end
       it 'should return the root, the parent and then children' do
-        result = Xlib::query_tree(@display, @window)
+        result = Xlib::x_query_tree(@display, @window)
         result.shift.should == @root
         result.shift.should be_a Numeric
         children = result.shift
@@ -193,7 +191,7 @@ describe Xlib do
     end
     context 'with child windows of the root window' do
       before do
-        arr = Xlib::query_tree @display, @root
+        arr = Xlib::x_query_tree @display, @root
         @children = arr[2]
       end
       it 'should return a Array of Numeric' do

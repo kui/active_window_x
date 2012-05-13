@@ -14,7 +14,7 @@ describe Xlib do
   describe '#root' do
     before do
       @root = Window.new @display, 111
-      Xlib.should_receive(:query_tree).
+      Xlib.should_receive(:x_query_tree).
         with(@display, @window).
         and_return([@root, nil, nil])
     end
@@ -26,7 +26,7 @@ describe Xlib do
   describe '#parent' do
     before do
       @parent = Window.new @display, 111
-      Xlib.should_receive(:query_tree).
+      Xlib.should_receive(:x_query_tree).
         with(@display, @window).
         and_return([nil, @parent, nil])
     end
@@ -41,7 +41,7 @@ describe Xlib do
       @children.push Window.new @display, 111
       @children.push Window.new @display, 222
       @children.push Window.new @display, 333
-      Xlib.should_receive(:query_tree).
+      Xlib.should_receive(:x_query_tree).
         with(@display, @window).
         and_return([nil, nil, @children])
     end
