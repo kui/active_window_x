@@ -6,42 +6,42 @@ require 'dl'
 include ActiveWindowX
 
 describe Xlib do
-  describe '.open_display' do
+  describe '.x_open_display' do
     context 'with nil' do
       it 'should return a Display' do
-        Xlib::open_display(nil).class.should == Xlib::Display
+        Xlib::x_open_display(nil).class.should == Xlib::Display
       end
     end
     context 'with the default display name' do
       it 'should return a Display' do
-        Xlib::open_display(ENV['DISPLAY']).class.should == Xlib::Display
+        Xlib::x_open_display(ENV['DISPLAY']).class.should == Xlib::Display
       end
     end if ENV['DISPLAY']
     context 'with an invalid display name' do
       it 'should raise a exception' do
-        lambda{ Xlib::open_display('foo') }.should raise_error(Xlib::UnknownDisplayName)
+        lambda{ Xlib::x_open_display('foo') }.should raise_error(Xlib::UnknownDisplayName)
       end
     end
   end
 
-  describe '.close_display' do
+  describe '.x_close_display' do
     context 'with a Display' do
       it 'should return 0' do
-        d = Xlib::open_display(nil)
-        Xlib::close_display(d).should == 0
+        d = Xlib::x_open_display(nil)
+        Xlib::x_close_display(d).should == 0
       end
     end
   end
 
   describe '.get_input_focus' do
     before do
-      @display = Xlib::open_display(nil)
+      @display = Xlib::x_open_display(nil)
     end
     after do
-      Xlib::close_display @display
+      Xlib::x_close_display @display
     end
     it 'should return a Array of Number (for window id)' do
-      result = Xlib::get_input_focus(@display)
+      result = Xlib::x_get_input_focus(@display)
       result[0].should be_a Numeric
       result[1].should be_within(0).of(2)
     end
@@ -49,10 +49,10 @@ describe Xlib do
 
   describe '.x_query_tree' do
     before do
-      @display = Xlib::open_display(nil)
+      @display = Xlib::x_open_display(nil)
     end
     after do
-      Xlib::close_display @display
+      Xlib::x_close_display @display
     end
     context 'with the root window' do
       before do
@@ -89,50 +89,50 @@ describe Xlib do
 
   describe '.intern_atom' do
     before do
-      @display = Xlib::open_display(nil)
+      @display = Xlib::x_open_display(nil)
     end
     after do
-      Xlib::close_display @display
+      Xlib::x_close_display @display
     end
     context "with a atom name" do
       it 'should return a Numeric' do
-        Xlib::intern_atom(@display, "Name", false).should be_a Numeric
+        Xlib::x_intern_atom(@display, "Name", false).should be_a Numeric
       end
     end
   end
 
   describe '.get_atom_name' do
     before do
-      @display = Xlib::open_display(nil)
+      @display = Xlib::x_open_display(nil)
       @name = "Name"
-      @atom = Xlib::intern_atom(@display, @name, false)
+      @atom = Xlib::x_intern_atom(@display, @name, false)
     end
     after do
-      Xlib::close_display @display
+      Xlib::x_close_display @display
     end
     context "with a atom" do
       it 'should return the atom name' do
-        Xlib::get_atom_name(@display, @atom).should == @name
+        Xlib::x_get_atom_name(@display, @atom).should == @name
       end
     end
   end
 
   describe '.get_window_property' do
     before do
-      @display = Xlib::open_display nil
+      @display = Xlib::x_open_display nil
       @window = Xlib::default_root_window @display
       @length = 1024
     end
     after do
-      Xlib::close_display @display
+      Xlib::x_close_display @display
     end
     context 'with unknown property' do
       before do
         @name = "FOO"
-        @atom = Xlib::intern_atom @display, @name, false
+        @atom = Xlib::x_intern_atom @display, @name, false
       end
       it 'should return a Array such as [Xlib::None, ]' do
-        r = Xlib::get_window_property(@display, @window, @atom, 0, @length, false, Xlib::AnyPropertyType);
+        r = Xlib::x_get_window_property(@display, @window, @atom, 0, @length, false, Xlib::AnyPropertyType);
         r.shift.should == Xlib::None
         r.shift.should == 0
         r.shift.should == 0
@@ -143,11 +143,11 @@ describe Xlib do
     context 'with an invalid type and a propery named as "_NET_ACTIVE_WINDOW"' do
       before do
         @name = "_NET_ACTIVE_WINDOW"
-        @atom = Xlib::intern_atom @display, @name, false
-        @window_atom = Xlib::intern_atom(@display, "WINDOW", false)
+        @atom = Xlib::x_intern_atom @display, @name, false
+        @window_atom = Xlib::x_intern_atom(@display, "WINDOW", false)
       end
       it 'should return a Array such as [Xlib::None, ]' do
-        r = Xlib::get_window_property(@display, @window, @atom, 0, @length, false, 10)
+        r = Xlib::x_get_window_property(@display, @window, @atom, 0, @length, false, 10)
         p r
         r.shift.should == @window_atom
         r.shift.should == 32
@@ -159,11 +159,11 @@ describe Xlib do
     context 'with an validi type and a propery named as "_NET_ACTIVE_WINDOW"' do
       before do
         @name = "_NET_ACTIVE_WINDOW"
-        @atom = Xlib::intern_atom @display, @name, false
-        @window_atom = Xlib::intern_atom(@display, "WINDOW", false)
+        @atom = Xlib::x_intern_atom @display, @name, false
+        @window_atom = Xlib::x_intern_atom(@display, "WINDOW", false)
       end
       it 'should return a Array such as [Xlib::None, ]' do
-        r = Xlib::get_window_property(@display, @window, @atom, 0, @length, false, @window_atom)
+        r = Xlib::x_get_window_property(@display, @window, @atom, 0, @length, false, @window_atom)
         p r
         r.shift.should == @window_atom
         r.shift.should == 32
@@ -176,15 +176,15 @@ describe Xlib do
 
   describe '.list_properties' do
     before do
-      @display = Xlib::open_display nil
+      @display = Xlib::x_open_display nil
       @root = Xlib::default_root_window @display
     end
     after do
-      Xlib::close_display @display
+      Xlib::x_close_display @display
     end
     context 'with the root window' do
       it 'should return a Array of Numeric' do
-        arr = Xlib::list_properties(@display, @root)
+        arr = Xlib::x_list_properties(@display, @root)
         arr.should be_a Array
         arr.each{|a| a.should be_a Numeric; }
       end
@@ -196,7 +196,7 @@ describe Xlib do
       end
       it 'should return a Array of Numeric' do
         @children.each do |child|
-          arr = Xlib::list_properties(@display, child)
+          arr = Xlib::x_list_properties(@display, child)
           if arr
             arr.should be_a Array
             arr.each{|a| a.should be_a Numeric }
