@@ -89,7 +89,7 @@ describe Window do
     context 'with a property name, which does not exist for the window,' do
       before do
         Xlib.should_receive(:x_get_window_property).
-          with(@display, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          with(@display.raw, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
           and_return([nil, 0, 0, 0, nil])
       end
       it 'should return nil' do
@@ -100,7 +100,7 @@ describe Window do
       before do
         @prop = [123, 456]
         Xlib.should_receive(:x_get_window_property).
-          with(@display, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          with(@display.raw, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
           and_return([@prop_id, 32, @prop.length, 0, @prop.pack('l!*')])
       end
       it 'should return ' do
@@ -111,7 +111,7 @@ describe Window do
       before do
         @prop = [12, 34, 46]
         Xlib.should_receive(:x_get_window_property).
-          with(@display, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          with(@display.raw, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
           and_return([@prop_id, 16, @prop.length, 0, @prop.pack('s*')])
       end
       it 'should return ' do
@@ -122,7 +122,7 @@ describe Window do
       before do
         @prop = "abcdefg\0hijklmn"
         Xlib.should_receive(:x_get_window_property).
-          with(@display, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
+          with(@display.raw, @window.id, @prop_id, 0, Window::READ_BUFF_LENGTH, false, Xlib::AnyPropertyType).
           and_return([@prop_id, 8, @prop.length, 0, @prop])
       end
       it 'should return ' do
