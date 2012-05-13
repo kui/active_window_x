@@ -6,7 +6,7 @@ require 'dl'
 include ActiveWindowX
 
 describe Xlib do
-  describe '.x_open_display' do
+  describe '.#x_open_display' do
     context 'with nil' do
       it 'should return a Display' do
         Xlib::x_open_display(nil).class.should == Xlib::Display
@@ -24,7 +24,7 @@ describe Xlib do
     end
   end
 
-  describe '.x_close_display' do
+  describe '.#x_close_display' do
     context 'with a Display' do
       it 'should return 0' do
         d = Xlib::x_open_display(nil)
@@ -33,7 +33,7 @@ describe Xlib do
     end
   end
 
-  describe '.get_input_focus' do
+  describe '.#get_input_focus' do
     before do
       @display = Xlib::x_open_display(nil)
     end
@@ -47,7 +47,7 @@ describe Xlib do
     end
   end
 
-  describe '.x_query_tree' do
+  describe '.#x_query_tree' do
     before do
       @display = Xlib::x_open_display(nil)
     end
@@ -87,7 +87,7 @@ describe Xlib do
     end
   end
 
-  describe '.intern_atom' do
+  describe '.#intern_atom' do
     before do
       @display = Xlib::x_open_display(nil)
     end
@@ -101,7 +101,7 @@ describe Xlib do
     end
   end
 
-  describe '.get_atom_name' do
+  describe '.#get_atom_name' do
     before do
       @display = Xlib::x_open_display(nil)
       @name = "Name"
@@ -117,7 +117,7 @@ describe Xlib do
     end
   end
 
-  describe '.get_window_property' do
+  describe '.#get_window_property' do
     before do
       @display = Xlib::x_open_display nil
       @window = Xlib::default_root_window @display
@@ -174,7 +174,7 @@ describe Xlib do
     end
   end
 
-  describe '.list_properties' do
+  describe '.#list_properties' do
     before do
       @display = Xlib::x_open_display nil
       @root = Xlib::default_root_window @display
