@@ -25,16 +25,36 @@ describe Xlib do
   end
 
   describe '#next_event' do
-    context 'with PropertyChangeMask'
     before do
       @root = @display.root_window
       @root.select_input Xlib::PropertyChangeMask
       @event = mock Xlib::XPropertyEvent
+      @event.stub(:type){@type}
+      @window_id = 222
+      @event.stub(:window){@window_id}
+      @atom_id = 333
+      @event.stub(:atom){@atom_id}
       Xlib.should_receive(:x_next_event).and_return(@event)
     end
-    it 'should return a PropertyEvent' do
-      ev = @display.next_event
-      ev.type.should == @event.type
+    context 'with PropertyChangeMask' do
+      before do
+        @type = Xlib::PropertyNotify
+      end
+      it 'should return a PropertyEvent' do
+        ev = @display.next_event
+        ev.type.should == @event.type
+        ev.window.id.should == @event.window
+        ev.atom.id.should == @event.atom
+      end
+    end
+    context 'with other event type' do
+      before do
+        @type = 0
+      end
+      it 'should return a PropertyEvent' do
+        ev = @display.next_event
+        ev.type.should == @event.type
+      end
     end
   end
 
