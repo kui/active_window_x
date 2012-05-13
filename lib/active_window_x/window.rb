@@ -25,10 +25,12 @@ module ActiveWindowX
       (r = x_query_tree[0]) and Window.new(@display, r)
     end
 
+    # a return value of XQueryTree
     def parent
       (r = x_query_tree[1]) and Window.new(@display, r)
     end
 
+    # a return value of XQueryTree
     def children
       x_query_tree[2].map{|w|Window.new(@display, w)}
     end
