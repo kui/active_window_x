@@ -9,6 +9,7 @@ describe Xlib do
     @raw_display = mock Xlib::Display
     @display = mock Display
     @display.stub(:raw){@raw_display}
+    @display.stub(:kind_of?).with(Display).and_return(true)
     @id = 123456
     @window = Window.new @display, @id
   end

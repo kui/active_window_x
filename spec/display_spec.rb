@@ -27,7 +27,7 @@ describe Xlib do
       @root_id = 123
       @prop_atom = 111
       @id = 123456
-      Xlib.should_receive(:x_intern_atom).with(@display, '_NET_ACTIVE_WINDOW').
+      Xlib.should_receive(:x_intern_atom).with(@display.raw, '_NET_ACTIVE_WINDOW', false).
         and_return(@prop_atom)
     end
     context ', which Xlib::x_get_window_property find an active window,' do
