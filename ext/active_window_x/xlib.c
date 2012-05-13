@@ -76,7 +76,7 @@ VALUE xlib_query_tree(VALUE self, VALUE d, VALUE w){
   GetDisplay(d, display);
   window = NUM2ULONG(w);
   if(!XQueryTree(display, window, &root, &parent, &children, &nchildren))
-    rb_raise(rb_eRuntimeError, "fail to execute XQueryTree");
+    rb_raise(rb_eRuntimeError, "XQueryTree fail");
 
   children_obj = rb_ary_new2(nchildren);
   for(i=0; i < nchildren; i++){
