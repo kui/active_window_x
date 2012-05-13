@@ -33,8 +33,8 @@ module ActiveWindowX
     # window property getter with easy way for XGetWindowProperty
     # which return nil, if the specified property name does not exist,
     # a String or a Array of Number
-    def prop name
-      val, format, nitems = prop_raw name
+    def prop atom
+      val, format, nitems = prop_raw atom
       case format
       when 32; val.unpack("l!#{nitems}")
       when 16; val.unpack("s#{nitems}")
@@ -45,10 +45,14 @@ module ActiveWindowX
 
     # window property getter with easy way for XGetWindowProperty
     # which return [propety_value, format, number_of_items]
-    def prop_raw name
-      atom = @display.intern_atom name
+    def prop_raw atom
+      if atom.kind_of?(Numeric) or atom.kind_of?(String)
+        atom = Atom.new @display, atom
+      elsif not atom.kind_of? Atom
+        raise ArgumentError, "expect Numeric, String or #{Atom.name}"
+      end
       actual_type, actual_format, nitems, bytes_after, val =
-        Xlib::x_get_window_property @display.raw, @id, atom, 0, READ_BUFF_LENGTH, false, Xlib::AnyPropertyType
+        Xlib::x_get_window_property @display.raw, @id, atom.id, 0, READ_BUFF_LENGTH, false, Xlib::AnyPropertyType
       return [val, actual_format, nitems]
     end
 

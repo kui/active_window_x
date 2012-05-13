@@ -4,7 +4,7 @@ require 'active_window_x'
 
 include ActiveWindowX
 
-describe Window do
+describe Atom do
   before do
     @raw_display = mock Xlib::Display
     @display = mock Display
@@ -17,8 +17,7 @@ describe Window do
   describe '#name' do
     before do
       @name = 'FOOO'
-      Xlib.should_receive(:x_get_atom_name).with(@display.raw, @id).
-        and_return(@name)
+      @display.should_receive(:atom_name).twice.with(@id).and_return(@name)
     end
     it 'should return a String as an atom name' do
       @atom.name.should == @name

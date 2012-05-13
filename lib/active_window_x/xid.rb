@@ -18,7 +18,7 @@ module ActiveWindowX
       else
         raise ArgumentError, "expect #{Display.name} or #{Xlib::Display.name}"
       end
-      @id = id
+      @id ||= id
     end
 
   end
