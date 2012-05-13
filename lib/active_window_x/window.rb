@@ -30,21 +30,26 @@ module ActiveWindowX
     end
 
     # a return value of XQueryTree
+    # which is the root window for a display contains this window
     def root
       (r = x_query_tree[0]) and Window.new(@display, r)
     end
 
     # a return value of XQueryTree
+    # which is nil, if this window is RootWindow, or a Window.
     def parent
       (r = x_query_tree[1]) and Window.new(@display, r)
     end
 
     # a return value of XQueryTree
+    # which is an Array of Window
     def children
       x_query_tree[2].map{|w|Window.new(@display, w)}
     end
 
     # window property getter with easy way for XGetWindowProperty
+    # which return nil, if the specified property name does not exist,
+    # a String or a Array of Number
     def prop name
       val, format, nitems = prop_raw name
       case format
