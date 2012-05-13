@@ -5,8 +5,6 @@ module ActiveWindowX
   # binding for Display on X11
   class Display
 
-    READ_BUFF_LENGTH = 1024
-
     # raw class of Display
     attr_reader :raw
 
