@@ -6,10 +6,9 @@ include ActiveWindowX
 
 describe Xlib do
   before do
+    @display_raw = mock Xlib::Display
+    Xlib.should_receive(:x_open_display).and_return(@display_raw)
     @display = Display.new nil
-  end
-  after do
-    @display.close
   end
 
   describe '#root_window' do
