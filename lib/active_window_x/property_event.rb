@@ -31,7 +31,6 @@ module ActiveWindowX
   # binding for XPropertyEvent on X11
   class PropertyEvent < Event
     def initialize display, raw
-      p display
       super
       @serial = raw.serial
       @send_event = (raw.send_event != 0)
