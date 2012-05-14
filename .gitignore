@@ -3,6 +3,8 @@
 *.o
 *.so
 *.dll
+*.bk
+*.log
 *~
 .bundle
 .config
