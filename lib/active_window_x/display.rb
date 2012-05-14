@@ -32,7 +32,12 @@ module ActiveWindowX
     end
 
     def root_window
-      @root_window ||= RootWindow.new self, Xlib::default_root_window(@raw)
+      @root_window ||= RootWindow.new(self, Xlib::default_root_window(@raw))
+    end
+
+    # return IO to select and poll a XEvent with timeout
+    def connection
+      @conn ||= IO.new(Xlib::connection_number @raw)
     end
 
     def active_window
