@@ -106,6 +106,16 @@ VALUE xlib_default_root_window(VALUE self, VALUE d) {
   return root == None ? Qnil : ULONG2NUM(root);
 }
 
+// ConnectionNumber
+VALUE xlib_connection_number(VALUE self, VALUE display_obj) {
+  Display* display;
+  int fd;
+
+  GetDisplay(display_obj, display);
+
+  return INT2FIX(ConnectionNumber(display));
+}
+
 // XInternAtom
 static VALUE xlib_x_intern_atom(VALUE self, VALUE d, VALUE name_obj, VALUE b) {
   Display* display;
@@ -321,6 +331,7 @@ void Init_xlib(void){
   rb_define_singleton_method(xlib_module, "x_query_tree", xlib_x_query_tree, 2);
   rb_define_singleton_method(xlib_module, "default_root_window",
                              xlib_default_root_window, 1);
+  rb_define_singleton_method(xlib_module, "connection_number", xlib_connection_number, 1);
   rb_define_singleton_method(xlib_module, "x_intern_atom", xlib_x_intern_atom, 3);
   rb_define_singleton_method(xlib_module, "x_get_atom_name", xlib_x_get_atom_name, 2);
   rb_define_singleton_method(xlib_module, "x_get_window_property",
