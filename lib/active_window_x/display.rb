@@ -40,6 +40,11 @@ module ActiveWindowX
       @conn ||= IO.new(Xlib::connection_number @raw)
     end
 
+    # return the number of events that have been received from the X server
+    def pending
+      Xlib::x_pending @raw
+    end
+
     def active_window
       root_window.active_window
     end

@@ -109,10 +109,7 @@ VALUE xlib_default_root_window(VALUE self, VALUE d) {
 // ConnectionNumber
 VALUE xlib_connection_number(VALUE self, VALUE display_obj) {
   Display* display;
-  int fd;
-
   GetDisplay(display_obj, display);
-
   return INT2FIX(ConnectionNumber(display));
 }
 
@@ -292,6 +289,12 @@ VALUE xlib_x_next_event(VALUE self, VALUE display_obj) {
   return x_event_new(event_return);
 }
 
+VALUE xlib_x_pending(VALUE self, VALUE display_obj) {
+  Display *display;
+  GetDisplay(display_obj, display);
+  return INT2FIX(XPending(display));
+}
+
 #define ERROR_MESSAGE_BUFF 256
 int error_handler(Display* d, XErrorEvent* error_event){
   char desc[ERROR_MESSAGE_BUFF];
@@ -339,6 +342,7 @@ void Init_xlib(void){
   rb_define_singleton_method(xlib_module, "x_list_properties", xlib_x_list_properties, 2);
   rb_define_singleton_method(xlib_module, "x_select_input", xlib_x_select_input, 3);
   rb_define_singleton_method(xlib_module, "x_next_event", xlib_x_next_event, 1);
+  rb_define_singleton_method(xlib_module, "x_pending", xlib_x_pending, 1);
 
   /*
     Constants on X.h
