@@ -22,7 +22,7 @@ module ActiveWindowX
     end
 
     def == xid
-      xid.kind_of?(XID) and xid.id == @id
+      xid.kind_of?(Xid) and (xid.id == @id)
     end
   end
 
