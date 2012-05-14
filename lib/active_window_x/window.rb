@@ -67,10 +67,6 @@ module ActiveWindowX
       prop_atom_ids.map{|i| Atom.new @display, i}
     end
 
-    def == w
-      w.kind_of?(Window) and w.id == @id
-    end
-
     def select_input mask
       Xlib::x_select_input @display.raw, @id, mask
     end

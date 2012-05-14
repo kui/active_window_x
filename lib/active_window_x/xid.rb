@@ -21,6 +21,9 @@ module ActiveWindowX
       @id ||= id
     end
 
+    def == xid
+      xid.kind_of?(XID) and xid.id == @id
+    end
   end
 
 end
