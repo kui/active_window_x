@@ -176,8 +176,27 @@ describe Window do
   end
 
   describe '#command' do
-    context ', when the pid prop was not found,'
-    context ', when the pid prop was found,'
+    context ', when the pid prop was not found,' do
+      before do
+        @window.stub(:prop).with('_NET_WM_PID').and_return(nil)
+      end
+      it 'should return nil' do
+        @window.command.should be_nil
+      end
+    end
+    context ', when the pid prop was found,' do
+      before do
+        @pid = 1111111
+        @window.stub(:prop).with('_NET_WM_PID').and_return([@pid])
+        @command = 'foobar'
+        @path = "/proc/#{@pid}/cmdline"
+        File.stub(:readable_real?).with(@path).and_return(true)
+        File.stub(:read).with(@path).and_return(@command)
+      end
+      it 'should return nil' do
+        @window.command.should == @command
+      end
+    end
   end
 
   describe '#prop' do
