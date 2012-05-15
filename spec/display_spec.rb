@@ -28,6 +28,10 @@ describe Display do
       @root.select_input Xlib::PropertyChangeMask
       @event = mock Xlib::XPropertyEvent
       @event.stub(:type){@type}
+      @event.stub(:serial){1000}
+      @event.stub(:send_event){0}
+      @event.stub(:time){2000}
+      @event.stub(:state){nil}
       @window_id = 222
       @event.stub(:window){@window_id}
       @atom_id = 333
