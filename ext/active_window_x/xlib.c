@@ -20,6 +20,7 @@ VALUE xlib_module;
 VALUE display_class;
 VALUE x_event_class;
 VALUE x_property_event_class;
+VALUE x_client_message_class;
 VALUE unknown_display_name_class;
 VALUE x_error_event_class;
 
@@ -269,6 +270,17 @@ VALUE x_event_new(XEvent *xevent) {
     rb_iv_set(ret, "@time", ULONG2NUM(xevent->xproperty.time));
     rb_iv_set(ret, "@state", INT2FIX(xevent->xproperty.state));
     break;
+  case ClientMessage:
+    ret = Data_Wrap_Struct(x_client_message_class, 0, 0, xevent);
+    rb_iv_set(ret, "@type", INT2FIX(xevent->xclient.type));
+    rb_iv_set(ret, "@serial", ULONG2NUM(xevent->xclient.serial));
+    rb_iv_set(ret, "@send_event", INT2FIX(xevent->xproperty.send_event));
+    rb_iv_set(ret, "@display", Data_Wrap_Struct(display_class, 0, 0, xevent->xclient.display));
+    rb_iv_set(ret, "@window", ULONG2NUM(xevent->xclient.window));
+    rb_iv_set(ret, "@message_type", ULONG2NUM(xevent->xclient.message_type));
+    rb_iv_set(ret, "@format", INT2FIX(xevent->xclient.format));
+    rb_iv_set(ret, "@data", rb_str_new(xevent->xclient.data.b, 20));
+    break;
   default:
     ret = Data_Wrap_Struct(x_event_class, 0, 0, xevent);
     rb_iv_set(ret, "@type", INT2FIX(xevent->type));
@@ -325,6 +337,16 @@ void Init_xlib(void){
   rb_define_attr(x_property_event_class, "atom", True, True);
   rb_define_attr(x_property_event_class, "time", True, True);
   rb_define_attr(x_property_event_class, "state", True, True);
+  x_client_message_class =
+    rb_define_class_under(xlib_module, "XClientMessageClass", x_event_class);
+  rb_define_attr(x_client_message_class, "type", True, True);
+  rb_define_attr(x_client_message_class, "serial", True, True);
+  rb_define_attr(x_client_message_class, "send_event", True, True);
+  rb_define_attr(x_client_message_class, "display", True, True);
+  rb_define_attr(x_client_message_class, "window", True, True);
+  rb_define_attr(x_client_message_class, "message_type", True, True);
+  rb_define_attr(x_client_message_class, "format", True, True);
+  rb_define_attr(x_client_message_class, "data", True, True);
   unknown_display_name_class =
     rb_define_class_under(xlib_module, "UnknownDisplayName", rb_eRuntimeError);
   x_error_event_class =
