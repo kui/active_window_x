@@ -21,8 +21,10 @@ module ActiveWindowX
       @default_timeout = timeout
 
       @root = @display.root_window
-      @aw_atom = @display.intern_atom '_NET_ACTIVE_WINDOW'
-      @name_atom = @display.intern_atom 'WM_NAME'
+      @aw_atom = Atom.new @display, '_NET_ACTIVE_WINDOW'
+      @name_atom = Atom.new @display, 'WM_NAME'
+      @delete_atom = Atom.new @display, 'WM_DELETE_WINDOW'
+      puts "delete_atom: id:#{@delete_atom.id}"
       @conn = @display.connection
       @active_window = @root.active_window
 
@@ -49,7 +51,7 @@ module ActiveWindowX
       begin
         while @continue
           event = listen timeout
-          yield event if event and event.type
+          yield event if event and event.type and not window_closed?(event.window)
         end
       ensure
         @display.close if @display.closed?
@@ -68,16 +70,16 @@ module ActiveWindowX
         return nil
       end
 
+      type = nil
+      active_window = nil
+
       event = @display.next_event
-      if event.atom.id == @aw_atom
+      if event.atom == @aw_atom
         type = :active_window
         active_window = @root.active_window
-      elsif event.atom.id == @name_atom
+      elsif event.atom == @name_atom
         type = :title
         active_window = event.window
-      else
-        type = nil
-        active_window = nil
       end
 
       if type == :active_window and @active_window != active_window
@@ -87,6 +89,16 @@ module ActiveWindowX
       end
 
       Event.new type, active_window
+    end
+
+    def window_closed? w
+      return false if w.nil?
+      begin
+        w.prop_raw 'WM_STATE'
+        false
+      rescue Xlib::XErrorEvent
+        true
+      end
     end
 
     class Event
