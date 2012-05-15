@@ -78,6 +78,7 @@ VALUE xlib_x_query_tree(VALUE self, VALUE d, VALUE w){
 
   GetDisplay(d, display);
   window = NUM2ULONG(w);
+
   if(!XQueryTree(display, window, &root, &parent, &children, &nchildren))
     rb_raise(rb_eRuntimeError, "XQueryTree fail");
 
@@ -308,6 +309,26 @@ VALUE xlib_x_pending(VALUE self, VALUE display_obj) {
   return INT2FIX(XPending(display));
 }
 
+VALUE xlib_x_set_wm_protocols(VALUE self, VALUE display_obj, VALUE w_obj,
+                              VALUE atom_ary_obj) {
+  Display *display;
+  Window w;
+  Atom *atom_ary;
+  int count, s, len, i;
+
+  GetDisplay(display_obj, display);
+  w = (Window) NUM2ULONG(w_obj);
+  count = RARRAY(atom_ary_obj)->len;
+  atom_ary = ALLOC_N(Atom, len);
+  for (i=0; i<count; i++) atom_ary[i] = RARRAY(atom_ary_obj)->ptr[i];
+
+  s = XSetWMProtocols(display, w, atom_ary, count);
+  //if (s != Success)
+  //  rb_raise(rb_eRuntimeError, "XSetWMProtocols faild");
+
+  return INT2FIX(s);
+}
+
 #define ERROR_MESSAGE_BUFF 256
 int error_handler(Display* d, XErrorEvent* error_event){
   char desc[ERROR_MESSAGE_BUFF];
@@ -367,6 +388,8 @@ void Init_xlib(void){
   rb_define_singleton_method(xlib_module, "x_select_input", xlib_x_select_input, 3);
   rb_define_singleton_method(xlib_module, "x_next_event", xlib_x_next_event, 1);
   rb_define_singleton_method(xlib_module, "x_pending", xlib_x_pending, 1);
+  rb_define_singleton_method(xlib_module, "x_set_wm_protocols",
+                             xlib_x_set_wm_protocols, 3);
 
   /*
     Constants on X.h

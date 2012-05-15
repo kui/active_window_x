@@ -109,6 +109,15 @@ module ActiveWindowX
     def select_input mask
       Xlib::x_select_input @display.raw, @id, mask
     end
+
+    def set_wm_protocols msgs
+      atoms =
+        if msgs.kind_of? Atom then [msgs.id]
+        elsif msgs.kind_of? Array then msgs.map {|m| m.id }
+        else raise ArgumentError, 'expect Atom or Array of Atom'
+        end
+      Xlib::x_set_wm_protocols @display.raw, @id, atoms
+    end
   end
 
 end
