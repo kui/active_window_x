@@ -54,6 +54,11 @@ module ActiveWindowX
       val and val.split("\0")
     end
 
+    def pid
+      val = prop('_NET_WM_PID')
+      val and val.first
+    end
+
     # window property getter with easy way for XGetWindowProperty
     # which return nil, if the specified property name does not exist,
     # a String or a Array of Number
