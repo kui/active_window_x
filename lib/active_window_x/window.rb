@@ -30,6 +30,12 @@ module ActiveWindowX
       x_query_tree[2].map{|w| Window.new(@display, w)}
     end
 
+    # window title (web page title in browser, current command or dir in terminal app, etc)
+    def title
+      title = prop('_NET_WM_NAME')
+      title or prop('WM_NAME')
+    end
+
     # window property getter with easy way for XGetWindowProperty
     # which return nil, if the specified property name does not exist,
     # a String or a Array of Number
