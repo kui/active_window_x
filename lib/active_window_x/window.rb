@@ -36,6 +36,21 @@ module ActiveWindowX
       title or prop('WM_NAME')
     end
 
+    def app_name
+      val = app_class_prop
+      val and val[0]
+    end
+
+    def app_class
+      val = app_class_prop
+      val and val[1]
+    end
+
+    def app_class_prop
+      val = prop('WM_CLASS')
+      val and val.split("\0")
+    end
+
     # window property getter with easy way for XGetWindowProperty
     # which return nil, if the specified property name does not exist,
     # a String or a Array of Number

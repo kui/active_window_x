@@ -81,8 +81,6 @@ describe Window do
   end
 
   describe '#title' do
-    before do
-    end
     context ', when the _NET_WM_NAME and WM_NAME prop was not found,' do
       before do
         @window.stub(:prop).with('_NET_WM_NAME').and_return(nil)
@@ -113,14 +111,48 @@ describe Window do
     end
   end
 
-  describe '#name' do
-    context ', when the name prop was not found,'
-    context ', when the name prop was found,'
+  describe '#app_name' do
+    context ', when the class prop was not found,' do
+      before do
+        @window.stub(:prop).with('WM_CLASS').and_return(nil)
+      end
+      it 'should return nil' do
+        @window.app_name.should be_nil
+      end
+    end
+    context ', when the class prop was found,' do
+      before do
+        @name = "bar"
+        @class = "foo"
+        @value = "#{@name}\0#{@class}\0"
+        @window.stub(:prop).with('WM_CLASS').and_return(@value)
+      end
+      it 'should return the value' do
+        @window.app_name.should == @name
+      end
+    end
   end
 
-  describe '#class' do
-    context ', when the class prop was not found,'
-    context ', when the class prop was found,'
+  describe '#app_class' do
+    context ', when the class prop was not found,' do
+      before do
+        @window.stub(:prop).with('WM_CLASS').and_return(nil)
+      end
+      it 'should return nil' do
+        @window.app_class.should be_nil
+      end
+    end
+    context ', when the class prop was found,' do
+      before do
+        @name = "bar"
+        @class = "foo"
+        @value = "#{@name}\0#{@class}\0"
+        @window.stub(:prop).with('WM_CLASS').and_return(@value)
+      end
+      it 'should return the value' do
+        @window.app_class.should == @class
+      end
+    end
   end
 
   describe '#pid' do
