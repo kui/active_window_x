@@ -1,6 +1,7 @@
 # -*- coding:undecided-unix; mode:ruby; -*-
 
 require "active_window_x/version"
+require "active_window_x/xlib"
 require "active_window_x/display"
 require "active_window_x/xid"
 require "active_window_x/window"
@@ -11,7 +12,7 @@ require "active_window_x/property_event"
 require "active_window_x/event_listener"
 
 module ActiveWindowX
-  require "active_window_x/xlib"
+  module Xlib; end
 
   class Display; end
 

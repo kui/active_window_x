@@ -15,6 +15,7 @@
     Data_Get_Struct(obj, XEvent, ev);     \
   }
 
+VALUE active_window_x_module;
 VALUE xlib_module;
 VALUE display_class;
 VALUE x_event_class;
@@ -309,7 +310,8 @@ void Init_xlib(void){
   setlocale(LC_ALL, "");
   XSetErrorHandler(error_handler);
 
-  xlib_module = rb_define_module("Xlib");
+  active_window_x_module = rb_define_module("ActiveWindowX");
+  xlib_module = rb_define_module_under(active_window_x_module, "Xlib");
   display_class = rb_define_class_under(xlib_module, "Display", rb_cData);
   x_event_class = rb_define_class_under(xlib_module, "XEvent", rb_cData);
   rb_define_attr(x_event_class, "type", True, True);
