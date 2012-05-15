@@ -80,6 +80,59 @@ describe Window do
     end
   end
 
+  describe '#title' do
+    before do
+    end
+    context ', when the _NET_WM_NAME and WM_NAME prop was not found,' do
+      before do
+        @window.stub(:prop).with('_NET_WM_NAME').and_return(nil)
+        @window.stub(:prop).with('WM_NAME').and_return(nil)
+      end
+      it 'should return nil' do
+        @window.title.should be_nil
+      end
+    end
+    context ', when the WM_NAME prop was found,' do
+      before do
+        @title = 'foo bar baz'
+        @window.stub(:prop).with('_NET_WM_NAME').and_return(nil)
+        @window.stub(:prop).with('WM_NAME').and_return(@title)
+      end
+      it 'should return the value' do
+        @window.title.should == @title
+      end
+    end
+    context ', when the _NET_WM_NAME prop was found,' do
+      before do
+        @title = 'foo bar baz'
+        @window.stub(:prop).with('_NET_WM_NAME').and_return(@title)
+      end
+      it 'should return the value' do
+        @window.title.should == @title
+      end
+    end
+  end
+
+  describe '#name' do
+    context ', when the name prop was not found,'
+    context ', when the name prop was found,'
+  end
+
+  describe '#class' do
+    context ', when the class prop was not found,'
+    context ', when the class prop was found,'
+  end
+
+  describe '#pid' do
+    context ', when the pid prop was not found,'
+    context ', when the pid prop was found,'
+  end
+
+  describe '#command' do
+    context ', when the pid prop was not found,'
+    context ', when the pid prop was found,'
+  end
+
   describe '#prop' do
     before do
       @prop_id = 1234
