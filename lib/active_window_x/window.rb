@@ -59,6 +59,16 @@ module ActiveWindowX
       val and val.first
     end
 
+    def command
+      id = pid
+      return nil if id.nil?
+
+      path = "/proc/#{id}/cmdline"
+      return nil unless File.readable_real? path
+
+      File.read path
+    end
+
     # window property getter with easy way for XGetWindowProperty
     # which return nil, if the specified property name does not exist,
     # a String or a Array of Number
