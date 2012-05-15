@@ -26,7 +26,7 @@ module ActiveWindowX
       @conn = @display.connection
       @active_window = @root.active_window
 
-      @active_window.select_input Xlib::PropertyChangeMask
+      @active_window.select_input Xlib::PropertyChangeMask if @active_window
       @root.select_input Xlib::PropertyChangeMask
 
       if block_given?
