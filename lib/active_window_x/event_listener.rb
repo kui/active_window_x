@@ -16,7 +16,7 @@ module ActiveWindowX
     # set false if you want to terminate #start loop when next timeout or event receiving
     attr_accessor :continue
 
-    def initialize name=nil, timeout=DEFAULT_TIMEOUT
+    def initialize name=nil, timeout=DEFAULT_TIMEOUT, &block
       @display = Display.new name
       @default_timeout = timeout
 
@@ -30,7 +30,7 @@ module ActiveWindowX
       @root.select_input Xlib::PropertyChangeMask
 
       if block_given?
-        start @default_timeout
+        start @default_timeout, &block
       end
     end
 
