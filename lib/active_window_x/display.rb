@@ -70,6 +70,7 @@ module ActiveWindowX
 
       case xevent.type
       when Xlib::PropertyNotify; PropertyEvent.new self, xevent
+      when Xlib::ClientMessage; ClientMessageEvent.new self, xevent
       else Event.new self, xevent
       end
     end

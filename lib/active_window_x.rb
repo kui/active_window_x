@@ -9,6 +9,7 @@ require "active_window_x/root_window"
 require "active_window_x/atom"
 require "active_window_x/event"
 require "active_window_x/property_event"
+require "active_window_x/client_message_event"
 require "active_window_x/event_listener"
 
 module ActiveWindowX
@@ -23,6 +24,7 @@ module ActiveWindowX
 
   class Event; end
   class PropertyEvent < Event; end
+  class ClientMessageEvent < Event; end
 
   class EventListener; end
 end
