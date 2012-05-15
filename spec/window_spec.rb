@@ -156,8 +156,23 @@ describe Window do
   end
 
   describe '#pid' do
-    context ', when the pid prop was not found,'
-    context ', when the pid prop was found,'
+    context ', when the pid prop was not found,' do
+      before do
+        @window.stub(:prop).with('_NET_WM_PID').and_return(nil)
+      end
+      it 'should return nil' do
+        @window.pid.should be_nil
+      end
+    end
+    context ', when the pid prop was found,' do
+      before do
+        @pid = 1111111
+        @window.stub(:prop).with('_NET_WM_PID').and_return([@pid])
+      end
+      it 'should return nil' do
+        @window.pid.should == @pid
+      end
+    end
   end
 
   describe '#command' do
