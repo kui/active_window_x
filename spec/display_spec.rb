@@ -4,18 +4,17 @@ require 'active_window_x'
 
 include ActiveWindowX
 
-describe Xlib do
+describe Display do
   before do
     @display_raw = mock Xlib::Display
-    Xlib.should_receive(:x_open_display).and_return(@display_raw)
+    Xlib.stub(:x_open_display).and_return(@display_raw)
     @display = Display.new nil
+    @root_id = 9999
+    Xlib.stub(:default_root_window).with(@display_raw).and_return(@root_id)
+    Xlib.stub(:x_select_input).and_return(1)
   end
 
   describe '#root_window' do
-    before do
-      @root_id = 123456
-      Xlib.should_receive(:default_root_window).and_return(@root_id)
-    end
     it 'should return the root window' do
       r = @display.root_window
       r.id.should == @root_id
