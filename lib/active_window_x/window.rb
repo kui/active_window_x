@@ -30,17 +30,20 @@ module ActiveWindowX
       x_query_tree[2].map{|w| Window.new(@display, w)}
     end
 
-    # window title (web page title in browser, current command or dir in terminal app, etc)
+    # window title (current web page title in browser, current command or dir in terminal app, etc.)
     def title
       title = prop('_NET_WM_NAME')
       title or prop('WM_NAME')
     end
 
+    # window name (terminal, google-chrome, etc.)
     def app_name
       val = app_class_prop
       val and val[0]
     end
 
+    # window class (Terminal, Google-chrome, etc.)
+    # TODO write the difference of app_name and app_class
     def app_class
       val = app_class_prop
       val and val[1]
