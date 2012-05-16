@@ -56,4 +56,5 @@ and see [other samples](https://github.com/kui/active_window_x/tree/master/sampl
 
 * See `git grep TODO`
 * Accessor API for the window icons
-* Setter API to select event types for listening
+* Setter to select event types for listening
+* `@continue` setter to terminate graceful
