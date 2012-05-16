@@ -37,10 +37,11 @@ int raise_if_xerror_occurred(){
   if (xerror == NULL) return 0;
 
   char desc[ERROR_MESSAGE_BUFF];
-  xerror = NULL;
   XGetErrorText(xerror->display, xerror->error_code, desc, ERROR_MESSAGE_BUFF);
+  xerror = NULL;
   rb_raise(x_error_event_class, "%s", desc);
-  return xerror->error_code;
+
+  return 1;
 }
 /* /error handling */
 
@@ -65,8 +66,11 @@ VALUE xlib_x_open_display(VALUE self, VALUE name_obj) {
 // XCloseDisplay
 VALUE xlib_x_close_display(VALUE self, VALUE display_obj) {
   Display* d;
+  int i;
   GetDisplay(display_obj, d);
-  return INT2FIX((int) XCloseDisplay(d));
+  i = XCloseDisplay(d);
+  raise_if_xerror_occurred();
+  return INT2FIX(i);
 }
 
 // XGetInputFocus
@@ -78,6 +82,7 @@ VALUE xlib_x_get_input_focus(VALUE self, VALUE display_obj) {
 
   GetDisplay(display_obj, d);
   XGetInputFocus(d, &window, &revert_to);
+  raise_if_xerror_occurred();
 
   arr_obj = rb_ary_new2(2L);
   rb_ary_push(arr_obj, window == None ? Qnil : ULONG2NUM((unsigned long) window));
@@ -99,8 +104,9 @@ VALUE xlib_x_query_tree(VALUE self, VALUE d, VALUE w){
   GetDisplay(d, display);
   window = NUM2ULONG(w);
 
-  if(!XQueryTree(display, window, &root, &parent, &children, &nchildren))
-    rb_raise(rb_eRuntimeError, "XQueryTree fail");
+  i = XQueryTree(display, window, &root, &parent, &children, &nchildren);
+  raise_if_xerror_occurred();
+  if(i == 0) rb_raise(rb_eRuntimeError, "XQueryTree fail");
 
   children_obj = rb_ary_new2(nchildren);
   for(i=0; i < nchildren; i++){
@@ -148,6 +154,7 @@ static VALUE xlib_x_intern_atom(VALUE self, VALUE d, VALUE name_obj, VALUE b) {
   bool = (b == Qfalse || b == Qnil) ? False : True;
 
   atom = XInternAtom(display, name, bool);
+  raise_if_xerror_occurred();
 
   return atom == None ? Qnil : ULONG2NUM((unsigned long) atom);
 }
@@ -163,6 +170,7 @@ static VALUE xlib_x_get_atom_name(VALUE self, VALUE d, VALUE atom_obj){
   atom = NUM2ULONG(atom_obj);
 
   name = XGetAtomName(display, atom);
+  raise_if_xerror_occurred();
 
   if(name == NULL) {
     r = Qnil;
@@ -175,9 +183,9 @@ static VALUE xlib_x_get_atom_name(VALUE self, VALUE d, VALUE atom_obj){
 
 // XGetWindowProperty
 static VALUE xlib_x_get_window_property(VALUE self, VALUE display_obj, VALUE w_obj,
-                                      VALUE property_obj, VALUE long_offset_obj,
-                                      VALUE long_length_obj, VALUE delete_obj,
-                                      VALUE req_type_obj){
+                                        VALUE property_obj, VALUE long_offset_obj,
+                                        VALUE long_length_obj, VALUE delete_obj,
+                                        VALUE req_type_obj){
   Display* display;
   Window w;
   Atom property;
@@ -204,6 +212,7 @@ static VALUE xlib_x_get_window_property(VALUE self, VALUE display_obj, VALUE w_o
                               req_type,
                               &actual_type_return, &actual_format_return,
                               &nitems_return, &bytes_after_return, &prop_return);
+  raise_if_xerror_occurred();
   if (result != Success)
     rb_raise(rb_eRuntimeError, "XGetWindowProperty faild");
 
@@ -247,6 +256,7 @@ VALUE xlib_x_list_properties(VALUE self, VALUE display_obj, VALUE w_obj) {
   w = (Window) NUM2ULONG(w_obj);
 
   result = XListProperties(display, w, &num_prop_return);
+  raise_if_xerror_occurred();
   if (result == NULL) {
     ary = Qnil;
   }else{
@@ -271,6 +281,7 @@ VALUE xlib_x_select_input(VALUE self, VALUE display_obj, VALUE w_obj, VALUE even
   event_mask = NUM2LONG(event_mask_obj);
 
   result = XSelectInput(display, w, event_mask);
+  raise_if_xerror_occurred();
 
   return INT2NUM(result);
 }
@@ -343,8 +354,8 @@ VALUE xlib_x_set_wm_protocols(VALUE self, VALUE display_obj, VALUE w_obj,
   for (i=0; i<count; i++) atom_ary[i] = RARRAY(atom_ary_obj)->ptr[i];
 
   s = XSetWMProtocols(display, w, atom_ary, count);
-  //if (s != Success)
-  //  rb_raise(rb_eRuntimeError, "XSetWMProtocols faild");
+  raise_if_xerror_occurred();
+  if (s != Success) rb_raise(rb_eRuntimeError, "XSetWMProtocols faild");
 
   return INT2FIX(s);
 }
