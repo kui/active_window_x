@@ -24,6 +24,26 @@ VALUE x_client_message_class;
 VALUE unknown_display_name_class;
 VALUE x_error_event_class;
 
+/* error handling */
+// TODO implement for thread safe
+XErrorEvent *xerror = NULL;
+int error_handler(Display* d, XErrorEvent* error_event){
+  xerror = error_event;
+  return 1;
+}
+
+#define ERROR_MESSAGE_BUFF 256
+int raise_if_xerror_occurred(){
+  if (xerror == NULL) return 0;
+
+  char desc[ERROR_MESSAGE_BUFF];
+  xerror = NULL;
+  XGetErrorText(xerror->display, xerror->error_code, desc, ERROR_MESSAGE_BUFF);
+  rb_raise(x_error_event_class, "%s", desc);
+  return xerror->error_code;
+}
+/* /error handling */
+
 // XOpenDisplay
 VALUE xlib_x_open_display(VALUE self, VALUE name_obj) {
   const char* name;
@@ -327,15 +347,6 @@ VALUE xlib_x_set_wm_protocols(VALUE self, VALUE display_obj, VALUE w_obj,
   //  rb_raise(rb_eRuntimeError, "XSetWMProtocols faild");
 
   return INT2FIX(s);
-}
-
-#define ERROR_MESSAGE_BUFF 256
-int error_handler(Display* d, XErrorEvent* error_event){
-  char desc[ERROR_MESSAGE_BUFF];
-  int length = ERROR_MESSAGE_BUFF;
-  XGetErrorText(d, error_event->error_code, desc, length);
-  rb_raise(x_error_event_class, "%s", desc);
-  return 1;
 }
 
 void Init_xlib(void){
