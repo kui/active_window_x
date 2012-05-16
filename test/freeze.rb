@@ -14,5 +14,8 @@ begin
 rescue Xlib::XErrorEvent
 end
 
+@root = Xlib::default_root_window @display
+Xlib::x_select_input @display, @root, Xlib::PropertyChangeMask
+
 puts :freeze
 Xlib::x_next_event @display
