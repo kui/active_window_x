@@ -24,7 +24,6 @@ module ActiveWindowX
       @aw_atom = Atom.new @display, '_NET_ACTIVE_WINDOW'
       @name_atom = Atom.new @display, 'WM_NAME'
       @delete_atom = Atom.new @display, 'WM_DELETE_WINDOW'
-      puts "delete_atom: id:#{@delete_atom.id}"
       @conn = @display.connection
       @active_window = @root.active_window
 
@@ -51,7 +50,12 @@ module ActiveWindowX
       begin
         while @continue
           event = listen timeout
-          yield event if event and event.type and not window_closed?(event.window)
+          next if not event
+
+          if window_closed?(event.window)
+            event.window = @root.active_window
+          end
+          yield event if event.type
         end
       ensure
         @display.close if @display.closed?
@@ -102,7 +106,7 @@ module ActiveWindowX
     end
 
     class Event
-      attr_reader :type, :window
+      attr_accessor :type, :window
       def initialize type, window
         @type = type; @window = window
       end
