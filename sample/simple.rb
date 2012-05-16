@@ -1,4 +1,4 @@
-
+require 'rubygems'
 require 'active_window_x'
 
 ActiveWindowX::EventListener.new do |e|

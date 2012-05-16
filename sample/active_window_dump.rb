@@ -1,5 +1,6 @@
 # dump all properties of window on changing active window
 
+require 'rubygems'
 require 'active_window_x'
 
 @listener = ActiveWindowX::EventListener.new
