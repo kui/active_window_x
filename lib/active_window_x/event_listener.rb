@@ -58,8 +58,12 @@ module ActiveWindowX
           yield event if event.type
         end
       ensure
-        @display.close if @display.closed?
+        destroy
       end
+    end
+
+    def destroy
+      @display.close if @display.closed?
     end
 
     # receive a event
