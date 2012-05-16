@@ -4,9 +4,9 @@ require File.expand_path('../lib/active_window_x/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Keiichiro Ui"]
   gem.email         = ["keiichiro.ui@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{ActiveWindowX is a gem to observe an active window on Linux (X Window System).}
+  gem.summary       = %q{observer an active window on Linux (X Window System).}
+  gem.homepage      = "https://github.com/kui/active_window_x"
 
   gem.files         = `git ls-files`.split($\)
   gem.extensions    = ['ext/active_window_x/extconf.rb']
