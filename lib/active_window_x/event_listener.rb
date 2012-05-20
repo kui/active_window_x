@@ -63,7 +63,7 @@ module ActiveWindowX
     end
 
     def destroy
-      @display.close if @display.closed?
+      @display.close
     end
 
     # receive a event
