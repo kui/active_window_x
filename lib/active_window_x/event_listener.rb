@@ -16,6 +16,8 @@ module ActiveWindowX
     # set false if you want to terminate #start loop when next timeout or event receiving
     attr_accessor :continue
 
+    # _name_ : a display name. if you give nil, EventListener use a Default Display
+    # _timeout_ : an intervel to check an interaction for the termination of the listening loop
     def initialize name=nil, timeout=DEFAULT_TIMEOUT, &block
       @display = Display.new name
       @default_timeout = timeout
@@ -52,9 +54,6 @@ module ActiveWindowX
           event = listen timeout
           next if not event
 
-          if window_closed?(event.window)
-            event.window = @root.active_window
-          end
           yield event if event.type
         end
       ensure
@@ -78,10 +77,19 @@ module ActiveWindowX
         return nil
       end
 
+      event = listen_with_no_select
+
+      event
+    end
+
+    def listen_with_no_select
       type = nil
       active_window = nil
 
       event = @display.next_event
+      if event.class != PropertyEvent
+        return nil
+      end
       if event.atom == @aw_atom
         type = :active_window
         active_window = @root.active_window
@@ -96,7 +104,12 @@ module ActiveWindowX
         @active_window.select_input(Xlib::PropertyChangeMask) if @active_window
       end
 
-      Event.new type, active_window
+      event = Event.new type, active_window
+      if window_closed?(event.window)
+        event.window = @root.active_window
+      end
+
+      event
     end
 
     def window_closed? w
