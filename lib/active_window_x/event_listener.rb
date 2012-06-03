@@ -112,6 +112,10 @@ module ActiveWindowX
       event
     end
 
+    def pending_events_num
+      @display.pending
+    end
+
     def window_closed? w
       return false if w.nil?
       begin
