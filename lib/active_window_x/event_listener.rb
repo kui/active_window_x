@@ -116,6 +116,10 @@ module ActiveWindowX
       @display.pending
     end
 
+    def connection
+      @display.connection
+    end
+
     def window_closed? w
       return false if w.nil?
       begin
