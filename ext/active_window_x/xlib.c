@@ -324,7 +324,6 @@ VALUE x_event_new(XEvent *xevent) {
 VALUE xlib_x_next_event(VALUE self, VALUE display_obj) {
   Display *display;
   XEvent *event_return;
-  VALUE event_obj;
 
   GetDisplay(display_obj, display);
   event_return = ALLOC(XEvent);
@@ -345,13 +344,15 @@ VALUE xlib_x_set_wm_protocols(VALUE self, VALUE display_obj, VALUE w_obj,
   Display *display;
   Window w;
   Atom *atom_ary;
-  int count, s, len, i;
+  int count, s, i;
 
   GetDisplay(display_obj, display);
+  count = RARRAY_LEN(atom_ary_obj);
+  atom_ary = ALLOC_N(Atom, count);
+  for (i=0; i<count; i++)
+    atom_ary[i] = RARRAY_PTR(atom_ary_obj)[i];
+
   w = (Window) NUM2ULONG(w_obj);
-  count = RARRAY(atom_ary_obj)->len;
-  atom_ary = ALLOC_N(Atom, len);
-  for (i=0; i<count; i++) atom_ary[i] = RARRAY(atom_ary_obj)->ptr[i];
 
   s = XSetWMProtocols(display, w, atom_ary, count);
   raise_if_xerror_occurred();

@@ -1,7 +1,6 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
 require 'active_window_x'
-require 'dl'
 
 include ActiveWindowX
 
@@ -149,14 +148,13 @@ describe Xlib do
       it 'should return a Array such as [Xlib::None, ]' do
         r = Xlib::x_get_window_property(@display, @window, @atom, 0, @length, false, 10)
         p r
-        r.shift.should == @window_atom
-        r.shift.should == 32
-        r.shift.should == 0
-        r.shift.should # == DL::sizeof('l')
-        r.length.should == 1
+        r[0].should == @window_atom
+        r[1].should == 32
+        r[2].should == 0
+        r.length.should == 5
       end
     end
-    context 'with an validi type and a propery named as "_NET_ACTIVE_WINDOW"' do
+    context 'with an valid type and a propery named as "_NET_ACTIVE_WINDOW"' do
       before do
         @name = "_NET_ACTIVE_WINDOW"
         @atom = Xlib::x_intern_atom @display, @name, false
@@ -165,11 +163,10 @@ describe Xlib do
       it 'should return a Array such as [Xlib::None, ]' do
         r = Xlib::x_get_window_property(@display, @window, @atom, 0, @length, false, @window_atom)
         p r
-        r.shift.should == @window_atom
-        r.shift.should == 32
-        l = r.shift
-        r.shift.should
-        r.shift.length == DL::sizeof('l') * l
+        r[0].should == @window_atom
+        r[1].should == 32
+        r[2].should == 1
+        r.length.should == 5
       end
     end
   end
