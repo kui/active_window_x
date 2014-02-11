@@ -6,8 +6,8 @@ include ActiveWindowX
 
 describe Window do
   before do
-    @raw_display = mock Xlib::Display
-    @display = mock Display
+    @raw_display = double Xlib::Display
+    @display = double Display
     @display.stub(:raw){@raw_display}
     @display.stub(:kind_of?).with(Display).and_return(true)
     @id = 123456

@@ -6,7 +6,7 @@ include ActiveWindowX
 
 describe Display do
   before do
-    @display_raw = mock Xlib::Display
+    @display_raw = double Xlib::Display
     Xlib.stub(:x_open_display).and_return(@display_raw)
     @display = Display.new nil
     @root_id = 9999
@@ -26,7 +26,7 @@ describe Display do
     before do
       @root = @display.root_window
       @root.select_input Xlib::PropertyChangeMask
-      @event = mock Xlib::XPropertyEvent
+      @event = double Xlib::XPropertyEvent
       @event.stub(:type){@type}
       @event.stub(:serial){1000}
       @event.stub(:send_event){0}

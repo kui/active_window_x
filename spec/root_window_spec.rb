@@ -6,7 +6,7 @@ include ActiveWindowX
 
 describe RootWindow do
   before do
-    @display_raw = mock Xlib::Display
+    @display_raw = double Xlib::Display
     @display_raw.stub(:kind_of?).with(Data).and_return(true)
     Xlib.stub(:x_open_display).and_return(@display_raw)
     @display = Display.new
