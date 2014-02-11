@@ -230,7 +230,7 @@ static VALUE xlib_x_get_window_property(VALUE self, VALUE display_obj, VALUE w_o
                       actual_format_return);
     }
     prop_size = nbytes * nitems_return;
-    prop = rb_str_new(prop_return, prop_size);
+    prop = rb_str_new((const char*) prop_return, prop_size);
     XFree(prop_return);
   }
 
