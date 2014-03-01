@@ -34,9 +34,10 @@ int error_handler(Display* d, XErrorEvent* error_event){
 
 #define ERROR_MESSAGE_BUFF 256
 int raise_if_xerror_occurred(){
+  char desc[ERROR_MESSAGE_BUFF];
+
   if (xerror == NULL) return 0;
 
-  char desc[ERROR_MESSAGE_BUFF];
   XGetErrorText(xerror->display, xerror->error_code, desc, ERROR_MESSAGE_BUFF);
   xerror = NULL;
   rb_raise(x_error_event_class, "%s", desc);
