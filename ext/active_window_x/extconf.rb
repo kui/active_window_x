@@ -5,6 +5,7 @@ map = {
   '1.9.' => 'RUBY_1_9',
   '2.0.' => 'RUBY_1_9',
   '2.1.' => 'RUBY_1_9',
+  '2.4.' => 'RUBY_1_9',
 }
 version, micro = map.find do |v, m|
   RUBY_VERSION.start_with? v
